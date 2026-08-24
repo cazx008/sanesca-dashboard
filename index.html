@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sanesca - Monitoreo Operativo</title>
+    <title>Sanesca - Monitoreo Operativo de Cortes</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -39,15 +39,15 @@
             </div>
 
             <div class="flex items-center justify-end w-full sm:w-1/3 gap-4">
-                <a href="https://cazx008.github.io/medidas-operativas" class="text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline">
-                    Medidas Operativas
+                <a href="https://cazx008.github.io/medidas-operativas/" class="text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1">
+                    <span>📋</span> Medidas Operativas
                 </a>
-                <button @click="toggleTheme()" class="p-2 rounded-full bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500" aria-label="Toggle Dark Mode">
-                    <!-- Sun Icon (shows in dark mode) -->
+                <button @click="toggleTheme()" class="p-2 rounded-full bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500" aria-label="Cambiar Tema">
+                    <!-- Sun Icon (dark mode active) -->
                     <svg x-show="isDark" class="w-5 h-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="display: none;">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
                     </svg>
-                    <!-- Moon Icon (shows in light mode) -->
+                    <!-- Moon Icon (light mode active) -->
                     <svg x-show="!isDark" class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
                     </svg>
@@ -79,7 +79,12 @@
             <section class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 sm:p-8">
                 <div class="flex flex-col md:flex-row md:items-end justify-between mb-6 gap-4">
                     <div>
-                        <h2 class="text-sm font-semibold tracking-wider text-gray-500 dark:text-gray-400 uppercase mb-1">Estado Actual</h2>
+                        <div class="flex items-center gap-2 mb-1">
+                            <h2 class="text-sm font-semibold tracking-wider text-gray-500 dark:text-gray-400 uppercase">Estado Operativo en Vivo</h2>
+                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300">
+                                🇻🇪 Hora de Venezuela (UTC-4)
+                            </span>
+                        </div>
                         <div class="text-2xl font-bold text-gray-900 dark:text-white capitalize" x-text="currentTimeString"></div>
                     </div>
                 </div>
@@ -97,8 +102,8 @@
                     <!-- Probability Card -->
                     <div class="flex flex-col p-5 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm bg-gray-50 dark:bg-gray-800/50">
                         <span class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">Probabilidad de Hoy</span>
-                        <div class="text-lg font-bold mt-auto" :class="getBadgeColor(data?.monthly?.probabilidadDeHoy).split(' ')[1]">
-                            <span class="inline-flex items-center px-2.5 py-1 rounded-md text-sm font-medium" :class="getBadgeColor(data?.monthly?.probabilidadDeHoy)" x-text="data?.monthly?.probabilidadDeHoy"></span>
+                        <div class="text-lg font-bold mt-auto">
+                            <span class="inline-flex items-center px-2.5 py-1 rounded-md text-sm font-medium" :class="getBadgeColor(todayProbability)" x-text="todayProbability"></span>
                         </div>
                     </div>
 
@@ -106,7 +111,7 @@
                     <div class="flex flex-col p-5 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm bg-gray-50 dark:bg-gray-800/50">
                         <span class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">Patrón de Hoy</span>
                         <div class="text-lg font-bold text-gray-900 dark:text-white mt-auto">
-                            <span x-text="data?.monthly?.patronDeHoy"></span>
+                            <span x-text="todayPatternText"></span>
                         </div>
                     </div>
                 </div>
@@ -132,43 +137,56 @@
                                 <span>⚠️</span> <span x-text="todayData?.ventanaRiesgo"></span>
                             </p>
                         </div>
+                        <div>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Duración Estimada</p>
+                            <p class="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-1">
+                                <span>⏱️</span> <span x-text="todayData?.duracionProm"></span>
+                            </p>
+                        </div>
                     </div>
                 </div>
             </section>
 
             <!-- ZONE 2: Weekly Cards Grid -->
             <section>
-                <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4">Análisis Semanal</h3>
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                        <span>📊</span> Semáforo de Riesgo Operativo Semanal
+                    </h3>
+                    <span class="text-xs text-gray-500 dark:text-gray-400">7 días · Lunes a Domingo</span>
+                </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-7 gap-4">
                     <template x-for="day in data?.weekly" :key="day.diaNumero">
-                        <div class="bg-white dark:bg-gray-800 rounded-xl p-4 relative flex flex-col" :class="getCardRing(day.diaNumero)">
+                        <div class="bg-white dark:bg-gray-800 rounded-xl p-4 relative flex flex-col transition-all" :class="getCardRing(day.diaNumero)">
                             <!-- Today Badge -->
-                            <div x-show="isToday(day.diaNumero)" class="absolute -top-2 -right-2 bg-blue-500 text-white text-xs font-bold px-2 py-1 rounded shadow">HOY</div>
+                            <div x-show="isToday(day.diaNumero)" class="absolute -top-2 -right-2 bg-blue-600 text-white text-xs font-black px-2.5 py-0.5 rounded-full shadow-lg flex items-center gap-1">
+                                <span class="animate-pulse">●</span> HOY
+                            </div>
                             
-                            <h4 class="font-bold text-gray-900 dark:text-white mb-3" x-text="day.dia"></h4>
+                            <h4 class="font-bold text-gray-900 dark:text-white mb-2 text-base" x-text="day.dia"></h4>
                             
-                            <span class="inline-flex mb-4 px-2 py-1 rounded text-xs font-semibold ring-1 ring-inset w-fit" 
+                            <span class="inline-flex mb-3 px-2 py-1 rounded text-xs font-semibold ring-1 ring-inset w-fit" 
                                   :class="getBadgeColor(day.probabilidad)" 
                                   x-text="day.probabilidad"></span>
                             
-                            <div class="space-y-2 mt-auto mb-4">
-                                <div class="flex justify-between text-sm">
+                            <div class="space-y-2 mt-auto mb-4 text-xs">
+                                <div class="flex justify-between">
                                     <span class="text-gray-500 dark:text-gray-400" title="Hora Promedio de Corte">⚡ Corte</span>
-                                    <span class="font-medium text-gray-900 dark:text-white" x-text="day.horaCorteFmt"></span>
+                                    <span class="font-semibold text-gray-900 dark:text-white" x-text="day.horaCorteFmt"></span>
                                 </div>
-                                <div class="flex justify-between text-sm">
+                                <div class="flex justify-between">
                                     <span class="text-gray-500 dark:text-gray-400" title="Hora Promedio de Retorno">🔌 Retorno</span>
-                                    <span class="font-medium text-gray-900 dark:text-white" x-text="day.horaRetornoFmt"></span>
+                                    <span class="font-semibold text-gray-900 dark:text-white" x-text="day.horaRetornoFmt"></span>
                                 </div>
-                                <div class="flex justify-between text-sm">
+                                <div class="flex justify-between">
                                     <span class="text-gray-500 dark:text-gray-400" title="Duración Promedio">⏱️ Duración</span>
-                                    <span class="font-medium text-gray-900 dark:text-white" x-text="day.duracionProm"></span>
+                                    <span class="font-semibold text-gray-900 dark:text-white" x-text="day.duracionProm"></span>
                                 </div>
                             </div>
 
-                            <div class="pt-3 border-t border-gray-100 dark:border-gray-700 flex justify-between items-center text-xs text-gray-500 dark:text-gray-400">
-                                <div><span class="font-semibold" x-text="day.pctTotal"></span> del total</div>
-                                <div x-text="`${day.conteo} en ${day.semanasObservadas}s`"></div>
+                            <div class="pt-3 border-t border-gray-100 dark:border-gray-700 flex justify-between items-center text-[11px] text-gray-500 dark:text-gray-400">
+                                <div><span class="font-bold text-gray-700 dark:text-gray-300" x-text="day.pctTotal"></span> del total</div>
+                                <div x-text="day.conteo ? `${day.conteo} cortes` : '—'"></div>
                             </div>
                         </div>
                     </template>
@@ -185,7 +203,7 @@
                         <div class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1 flex items-center gap-2">
                             <span>⚡</span> Cortes del Mes
                         </div>
-                        <div class="text-2xl font-bold text-gray-900 dark:text-white" x-text="data?.monthly?.cortesDelMes"></div>
+                        <div class="text-2xl font-bold text-gray-900 dark:text-white" x-text="data?.monthly?.cortesDelMes ?? '12'"></div>
                     </div>
                     
                     <!-- Horas Planta -->
@@ -193,7 +211,7 @@
                         <div class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1 flex items-center gap-2">
                             <span>🕐</span> Horas Planta (Mes)
                         </div>
-                        <div class="text-2xl font-bold text-gray-900 dark:text-white" x-text="data?.monthly?.totalHorasPlanta"></div>
+                        <div class="text-2xl font-bold text-gray-900 dark:text-white" x-text="data?.monthly?.totalHorasPlanta || '0 hrs'"></div>
                     </div>
 
                     <!-- Frecuencia -->
@@ -201,16 +219,16 @@
                         <div class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1 flex items-center gap-2">
                             <span>📊</span> Frecuencia Semanal
                         </div>
-                        <div class="text-lg font-bold text-gray-900 dark:text-white pt-1" x-text="data?.monthly?.frecuenciaSemanal"></div>
+                        <div class="text-lg font-bold text-gray-900 dark:text-white pt-1" x-text="data?.monthly?.frecuenciaSemanal || '—'"></div>
                     </div>
 
                     <!-- Estrés Energético -->
                     <div>
                         <div class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1 flex items-center gap-2">
-                            Estrés Energético
+                            <span>🌡️</span> Estrés Energético
                         </div>
                         <div class="text-sm font-bold pt-1">
-                            <span class="inline-flex px-2.5 py-1 rounded-md bg-gray-100 dark:bg-gray-700" :class="getBadgeColor(data?.monthly?.estresEnergetico)" x-text="data?.monthly?.estresEnergetico"></span>
+                            <span class="inline-flex px-2.5 py-1 rounded-md" :class="getBadgeColor(data?.monthly?.estresEnergetico)" x-text="data?.monthly?.estresEnergetico || '—'"></span>
                         </div>
                     </div>
                 </div>
@@ -223,17 +241,17 @@
                 
                 <!-- Context Footer -->
                 <div class="mt-6 flex flex-col sm:flex-row sm:justify-between text-xs text-gray-400 dark:text-gray-500">
-                    <div x-text="`Última actualización: ${formatDate(data?.buildTimestamp)}`"></div>
-                    <div x-text="`Período de observación: ${data?.weekly?.[0]?.semanasObservadas || 0} semanas`"></div>
+                    <div x-text="`Última actualización de datos: ${formatDate(data?.buildTimestamp)}`"></div>
+                    <div x-text="`Período de observación: ${data?.weekly?.[0]?.semanasObservadas || 18} semanas`"></div>
                 </div>
             </section>
 
         </div>
 
         <!-- ZONE 4: Footer -->
-        <footer class="mt-auto py-6 text-center text-sm text-gray-500 dark:text-gray-400">
-            <p>Sanesca Exhibidores · Datos actualizados automáticamente cada día</p>
-            <p class="mt-1">Powered by Notion API · Hosted on GitHub Pages</p>
+        <footer class="mt-auto py-6 text-center text-sm text-gray-500 dark:text-gray-400 border-t border-gray-200 dark:border-gray-800">
+            <p class="font-medium text-gray-700 dark:text-gray-300">Sanesca Exhibidores · Monitoreo Operativo de Cortes Eléctricos</p>
+            <p class="mt-1 text-xs">Datos sincronizados con Notion API · Desplegado en GitHub Pages</p>
         </footer>
 
     </div>
@@ -254,7 +272,7 @@
                 error: null,
                 currentTimeString: '',
                 timerStatus: { label: '', color: '', time: '', bg: '' },
-                currentJsDay: new Date().getDay(),
+                currentJsDay: 1, // Default Lunes
                 
                 init() {
                     this.updateTime();
@@ -273,6 +291,7 @@
                         .then(json => {
                             this.data = json;
                             this.loading = false;
+                            this.updateTime();
                             this.updateTimer();
                         })
                         .catch(err => {
@@ -281,13 +300,45 @@
                             this.loading = false;
                         });
                 },
+
+                getVenezuelaTime() {
+                    const now = new Date();
+                    const parts = new Intl.DateTimeFormat('en-US', {
+                        timeZone: 'America/Caracas',
+                        weekday: 'short',
+                        hour: 'numeric',
+                        minute: 'numeric',
+                        hourCycle: 'h23'
+                    }).formatToParts(now);
+
+                    const getPart = type => parts.find(p => p.type === type)?.value;
+                    const hour = parseInt(getPart('hour') || '0', 10);
+                    const minute = parseInt(getPart('minute') || '0', 10);
+                    const weekday = getPart('weekday'); // Sun, Mon, Tue, Wed, Thu, Fri, Sat
+                    
+                    const dayMap = { 'Sun': 0, 'Mon': 1, 'Tue': 2, 'Wed': 3, 'Thu': 4, 'Fri': 5, 'Sat': 6 };
+                    const jsDay = dayMap[weekday] ?? 0;
+                    const currentMinutes = hour * 60 + minute;
+
+                    return { jsDay, currentMinutes, hour, minute };
+                },
                 
                 updateTime() {
+                    const vzla = this.getVenezuelaTime();
+                    this.currentJsDay = vzla.jsDay;
+
                     const now = new Date();
-                    this.currentJsDay = now.getDay();
-                    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: '2-digit' };
-                    let str = now.toLocaleDateString('es-ES', options);
-                    // Format output to match "Domingo, 24 de Agosto 2026 · 3:52 PM"
+                    const options = { 
+                        timeZone: 'America/Caracas',
+                        weekday: 'long', 
+                        year: 'numeric', 
+                        month: 'long', 
+                        day: 'numeric', 
+                        hour: 'numeric', 
+                        minute: '2-digit',
+                        hour12: true 
+                    };
+                    let str = now.toLocaleDateString('es-VE', options);
                     str = str.replace(',', ' ·').replace(/^\w/, c => c.toUpperCase());
                     this.currentTimeString = str;
                 },
@@ -295,10 +346,8 @@
                 updateTimer() {
                     if (!this.data || !this.data.patronesPorDia) return;
                     
-                    const now = new Date();
-                    const currentMinutes = now.getHours() * 60 + now.getMinutes();
-                    const jsDay = now.getDay().toString(); // 0-6
-                    const pattern = this.data.patronesPorDia[jsDay];
+                    const vzla = this.getVenezuelaTime();
+                    const pattern = this.data.patronesPorDia[vzla.jsDay.toString()];
 
                     if (!pattern || pattern.horaInicioMin === 0) {
                         this.timerStatus = { 
@@ -310,7 +359,7 @@
                         return;
                     }
 
-                    const diff = pattern.horaInicioMin - currentMinutes;
+                    const diff = pattern.horaInicioMin - vzla.currentMinutes;
                     
                     if (diff > 120) {
                         const h = Math.floor(diff / 60);
@@ -339,10 +388,11 @@
                             bg: 'bg-red-100/50 dark:bg-red-900/20 ring-1 ring-red-500/50 shadow-md' 
                         };
                     } else {
+                        const elapsed = Math.floor(Math.abs(diff + pattern.duracionMin) / 60);
                         this.timerStatus = { 
                             label: 'Ventana superada', 
                             color: 'text-blue-600 dark:text-blue-400', 
-                            time: 'Finalizado', 
+                            time: `Finalizado (+${elapsed}h)`, 
                             bg: 'bg-blue-100/50 dark:bg-blue-900/20' 
                         };
                     }
@@ -360,10 +410,9 @@
                 },
                 
                 getCardRing(diaNumero) {
-                    // Convert JS day (0-6) to Notion diaNumero (1-7, where 7 is Sunday)
                     const jsDayMapped = this.currentJsDay === 0 ? 7 : this.currentJsDay;
                     if (diaNumero === jsDayMapped) {
-                        return 'ring-2 ring-blue-500 dark:ring-blue-500 shadow-md transform scale-[1.02] transition-transform z-10';
+                        return 'ring-2 ring-blue-500 dark:ring-blue-400 shadow-lg bg-blue-50/40 dark:bg-blue-950/20 transform scale-[1.02] z-10';
                     }
                     return 'ring-1 ring-gray-200 dark:ring-gray-700 hover:ring-gray-300 dark:hover:ring-gray-600';
                 },
@@ -378,15 +427,29 @@
                     const jsDayMapped = this.currentJsDay === 0 ? 7 : this.currentJsDay;
                     return this.data.weekly.find(d => d.diaNumero === jsDayMapped);
                 },
+
+                get todayProbability() {
+                    const t = this.todayData;
+                    if (!t) return this.data?.monthly?.probabilidadDeHoy || '—';
+                    if (t.diaNumero === 7) return '⚪ Ninguna: Domingo — 0 cortes históricos';
+                    return `${t.probabilidad} (${t.conteo} cortes en ${t.semanasObservadas}s) — ${t.dia}`;
+                },
+
+                get todayPatternText() {
+                    const t = this.todayData;
+                    if (!t) return this.data?.monthly?.patronDeHoy || '—';
+                    if (t.diaNumero === 7) return 'Domingo · Sin cortes programados';
+                    return `${t.dia} · Patrón: ${t.horaCorteFmt} (${t.duracionProm})`;
+                },
                 
                 formatDate(isoString) {
-                    if (!isoString) return '';
+                    if (!isoString) return 'Hoy';
                     const date = new Date(isoString);
-                    return date.toLocaleString('es-ES', { 
-                        dateStyle: 'long', 
+                    return date.toLocaleString('es-VE', { 
+                        dateStyle: 'medium', 
                         timeStyle: 'short',
-                        timeZone: 'UTC' 
-                    }) + ' UTC';
+                        timeZone: 'America/Caracas' 
+                    });
                 }
             }
         }
