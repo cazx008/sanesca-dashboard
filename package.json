@@ -1,0 +1,13 @@
+{
+  "name": "sanesca-dashboard",
+  "version": "1.0.0",
+  "description": "Dashboard de Monitoreo de Cortes Eléctricos — Sanesca Exhibidores. Visualiza patrones semanales de interrupciones eléctricas con datos de Notion.",
+  "private": true,
+  "scripts": {
+    "fetch": "node scripts/fetch-notion.js",
+    "build": "node scripts/fetch-notion.js"
+  },
+  "dependencies": {
+    "@notionhq/client": "^2.2.0"
+  }
+}

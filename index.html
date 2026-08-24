@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="es" x-data="dashboardApp()" x-init="init()" :class="{ 'dark': isDark }" class="antialiased">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sanesca - Monitoreo Operativo</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Alpine.js -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.3/dist/cdn.min.js"></script>
+</head>
+<body class="bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-gray-100 min-h-screen flex flex-col transition-colors duration-200">
+    
+    <div class="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 flex-grow flex flex-col space-y-8">
+        
+        <!-- ZONE 0: Header -->
+        <header class="flex flex-col sm:flex-row items-center justify-between gap-4 pb-4 border-b border-gray-200 dark:border-gray-800">
+            <div class="flex items-center w-full sm:w-1/3">
+                <img src="assets/logo-sanesca.png" alt="Sanesca Exhibidores" class="h-10 w-auto">
+            </div>
+            
+            <div class="w-full sm:w-1/3 text-center">
+                <h1 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white flex items-center justify-center gap-2">
+                    <span class="text-yellow-500">⚡</span> Monitoreo Operativo
+                </h1>
+            </div>
+
+            <div class="flex items-center justify-end w-full sm:w-1/3 gap-4">
+                <a href="https://username.github.io/medidas-operativas" class="text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline">
+                    Medidas Operativas
+                </a>
+                <button @click="toggleTheme()" class="p-2 rounded-full bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500" aria-label="Toggle Dark Mode">
+                    <!-- Sun Icon (shows in dark mode) -->
+                    <svg x-show="isDark" class="w-5 h-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="display: none;">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                    </svg>
+                    <!-- Moon Icon (shows in light mode) -->
+                    <svg x-show="!isDark" class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+        <!-- Loading State -->
+        <div x-show="loading" class="flex flex-col items-center justify-center py-20">
+            <svg class="animate-spin h-10 w-10 text-blue-600 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <p class="text-gray-500 dark:text-gray-400 font-medium">Cargando datos del dashboard...</p>
+        </div>
+
+        <!-- Error State -->
+        <div x-show="error" style="display: none;" class="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-lg p-6 text-center">
+            <div class="text-red-500 text-4xl mb-2">⚠️</div>
+            <h3 class="text-lg font-bold text-red-800 dark:text-red-300 mb-1">Error de conexión</h3>
+            <p class="text-red-600 dark:text-red-400" x-text="error"></p>
+            <button @click="init()" class="mt-4 px-4 py-2 bg-red-100 hover:bg-red-200 dark:bg-red-800 dark:hover:bg-red-700 text-red-800 dark:text-red-100 rounded-md transition-colors">Reintentar</button>
+        </div>
+
+        <!-- Dashboard Content -->
+        <div x-show="!loading && !error" style="display: none;" class="space-y-8">
+            
+            <!-- ZONE 1: Live Status Bar -->
+            <section class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 sm:p-8">
+                <div class="flex flex-col md:flex-row md:items-end justify-between mb-6 gap-4">
+                    <div>
+                        <h2 class="text-sm font-semibold tracking-wider text-gray-500 dark:text-gray-400 uppercase mb-1">Estado Actual</h2>
+                        <div class="text-2xl font-bold text-gray-900 dark:text-white capitalize" x-text="currentTimeString"></div>
+                    </div>
+                </div>
+
+                <!-- 3 Hero Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <!-- Timer Card -->
+                    <div class="flex flex-col p-5 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm transition-colors" :class="timerStatus.bg">
+                        <span class="text-sm font-semibold uppercase tracking-wider mb-2" :class="timerStatus.color" x-text="timerStatus.label"></span>
+                        <div class="text-3xl font-black text-gray-900 dark:text-white flex items-center gap-3">
+                            <span>⏱️</span> <span x-text="timerStatus.time"></span>
+                        </div>
+                    </div>
+
+                    <!-- Probability Card -->
+                    <div class="flex flex-col p-5 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm bg-gray-50 dark:bg-gray-800/50">
+                        <span class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">Probabilidad de Hoy</span>
+                        <div class="text-lg font-bold mt-auto" :class="getBadgeColor(data?.monthly?.probabilidadDeHoy).split(' ')[1]">
+                            <span class="inline-flex items-center px-2.5 py-1 rounded-md text-sm font-medium" :class="getBadgeColor(data?.monthly?.probabilidadDeHoy)" x-text="data?.monthly?.probabilidadDeHoy"></span>
+                        </div>
+                    </div>
+
+                    <!-- Pattern Card -->
+                    <div class="flex flex-col p-5 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm bg-gray-50 dark:bg-gray-800/50">
+                        <span class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">Patrón de Hoy</span>
+                        <div class="text-lg font-bold text-gray-900 dark:text-white mt-auto">
+                            <span x-text="data?.monthly?.patronDeHoy"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Today's Stats Row -->
+                <div class="border-t border-gray-200 dark:border-gray-700 pt-6" x-show="todayData">
+                    <div class="flex flex-wrap gap-x-8 gap-y-4">
+                        <div>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Hora Prom. Corte</p>
+                            <p class="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-1">
+                                <span class="text-red-500">⚡</span> <span x-text="todayData?.horaCorteFmt"></span>
+                            </p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Hora Prom. Retorno</p>
+                            <p class="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-1">
+                                <span class="text-green-500">🔌</span> <span x-text="todayData?.horaRetornoFmt"></span>
+                            </p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Ventana de Riesgo</p>
+                            <p class="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-1">
+                                <span>⚠️</span> <span x-text="todayData?.ventanaRiesgo"></span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ZONE 2: Weekly Cards Grid -->
+            <section>
+                <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4">Análisis Semanal</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-7 gap-4">
+                    <template x-for="day in data?.weekly" :key="day.diaNumero">
+                        <div class="bg-white dark:bg-gray-800 rounded-xl p-4 relative flex flex-col" :class="getCardRing(day.diaNumero)">
+                            <!-- Today Badge -->
+                            <div x-show="isToday(day.diaNumero)" class="absolute -top-2 -right-2 bg-blue-500 text-white text-xs font-bold px-2 py-1 rounded shadow">HOY</div>
+                            
+                            <h4 class="font-bold text-gray-900 dark:text-white mb-3" x-text="day.dia"></h4>
+                            
+                            <span class="inline-flex mb-4 px-2 py-1 rounded text-xs font-semibold ring-1 ring-inset w-fit" 
+                                  :class="getBadgeColor(day.probabilidad)" 
+                                  x-text="day.probabilidad"></span>
+                            
+                            <div class="space-y-2 mt-auto mb-4">
+                                <div class="flex justify-between text-sm">
+                                    <span class="text-gray-500 dark:text-gray-400" title="Hora Promedio de Corte">⚡ Corte</span>
+                                    <span class="font-medium text-gray-900 dark:text-white" x-text="day.horaCorteFmt"></span>
+                                </div>
+                                <div class="flex justify-between text-sm">
+                                    <span class="text-gray-500 dark:text-gray-400" title="Hora Promedio de Retorno">🔌 Retorno</span>
+                                    <span class="font-medium text-gray-900 dark:text-white" x-text="day.horaRetornoFmt"></span>
+                                </div>
+                                <div class="flex justify-between text-sm">
+                                    <span class="text-gray-500 dark:text-gray-400" title="Duración Promedio">⏱️ Duración</span>
+                                    <span class="font-medium text-gray-900 dark:text-white" x-text="day.duracionProm"></span>
+                                </div>
+                            </div>
+
+                            <div class="pt-3 border-t border-gray-100 dark:border-gray-700 flex justify-between items-center text-xs text-gray-500 dark:text-gray-400">
+                                <div><span class="font-semibold" x-text="day.pctTotal"></span> del total</div>
+                                <div x-text="`${day.conteo} en ${day.semanasObservadas}s`"></div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </section>
+
+            <!-- ZONE 3: Monthly Statistics -->
+            <section class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 sm:p-8">
+                <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-6" x-text="data?.monthly?.panel"></h3>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <!-- Cortes del Mes -->
+                    <div>
+                        <div class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1 flex items-center gap-2">
+                            <span>⚡</span> Cortes del Mes
+                        </div>
+                        <div class="text-2xl font-bold text-gray-900 dark:text-white" x-text="data?.monthly?.cortesDelMes"></div>
+                    </div>
+                    
+                    <!-- Horas Planta -->
+                    <div>
+                        <div class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1 flex items-center gap-2">
+                            <span>🕐</span> Horas Planta (Mes)
+                        </div>
+                        <div class="text-2xl font-bold text-gray-900 dark:text-white" x-text="data?.monthly?.totalHorasPlanta"></div>
+                    </div>
+
+                    <!-- Frecuencia -->
+                    <div>
+                        <div class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1 flex items-center gap-2">
+                            <span>📊</span> Frecuencia Semanal
+                        </div>
+                        <div class="text-lg font-bold text-gray-900 dark:text-white pt-1" x-text="data?.monthly?.frecuenciaSemanal"></div>
+                    </div>
+
+                    <!-- Estrés Energético -->
+                    <div>
+                        <div class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1 flex items-center gap-2">
+                            Estrés Energético
+                        </div>
+                        <div class="text-sm font-bold pt-1">
+                            <span class="inline-flex px-2.5 py-1 rounded-md bg-gray-100 dark:bg-gray-700" :class="getBadgeColor(data?.monthly?.estresEnergetico)" x-text="data?.monthly?.estresEnergetico"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Progreso Anual -->
+                <div class="border-t border-gray-200 dark:border-gray-700 pt-6">
+                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Progreso Anual</p>
+                    <div class="bg-gray-100 dark:bg-gray-900 rounded p-3 font-mono text-sm overflow-x-auto whitespace-nowrap text-gray-700 dark:text-gray-300" x-text="data?.monthly?.progresoAnual"></div>
+                </div>
+                
+                <!-- Context Footer -->
+                <div class="mt-6 flex flex-col sm:flex-row sm:justify-between text-xs text-gray-400 dark:text-gray-500">
+                    <div x-text="`Última actualización: ${formatDate(data?.buildTimestamp)}`"></div>
+                    <div x-text="`Período de observación: ${data?.weekly?.[0]?.semanasObservadas || 0} semanas`"></div>
+                </div>
+            </section>
+
+        </div>
+
+        <!-- ZONE 4: Footer -->
+        <footer class="mt-auto py-6 text-center text-sm text-gray-500 dark:text-gray-400">
+            <p>Sanesca Exhibidores · Datos actualizados automáticamente cada día</p>
+            <p class="mt-1">Powered by Notion API · Hosted on GitHub Pages</p>
+        </footer>
+
+    </div>
+
+    <!-- Application Logic -->
+    <script>
+        function dashboardApp() {
+            return {
+                isDark: localStorage.getItem('theme') === 'dark',
+                
+                toggleTheme() {
+                    this.isDark = !this.isDark;
+                    localStorage.setItem('theme', this.isDark ? 'dark' : 'light');
+                },
+                
+                data: null,
+                loading: true,
+                error: null,
+                currentTimeString: '',
+                timerStatus: { label: '', color: '', time: '', bg: '' },
+                currentJsDay: new Date().getDay(),
+                
+                init() {
+                    this.updateTime();
+                    // Setup interval to update time and timer every minute
+                    setInterval(() => { 
+                        this.updateTime(); 
+                        this.updateTimer(); 
+                    }, 60000);
+                    
+                    // Fetch JSON data
+                    fetch('data/dashboard.json')
+                        .then(res => {
+                            if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+                            return res.json();
+                        })
+                        .then(json => {
+                            this.data = json;
+                            this.loading = false;
+                            this.updateTimer();
+                        })
+                        .catch(err => {
+                            console.error("Fetch error:", err);
+                            this.error = 'No se pudieron cargar los datos. ' + err.message;
+                            this.loading = false;
+                        });
+                },
+                
+                updateTime() {
+                    const now = new Date();
+                    this.currentJsDay = now.getDay();
+                    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: '2-digit' };
+                    let str = now.toLocaleDateString('es-ES', options);
+                    // Format output to match "Domingo, 24 de Agosto 2026 · 3:52 PM"
+                    str = str.replace(',', ' ·').replace(/^\w/, c => c.toUpperCase());
+                    this.currentTimeString = str;
+                },
+                
+                updateTimer() {
+                    if (!this.data || !this.data.patronesPorDia) return;
+                    
+                    const now = new Date();
+                    const currentMinutes = now.getHours() * 60 + now.getMinutes();
+                    const jsDay = now.getDay().toString(); // 0-6
+                    const pattern = this.data.patronesPorDia[jsDay];
+
+                    if (!pattern || pattern.horaInicioMin === 0) {
+                        this.timerStatus = { 
+                            label: 'Sin cortes programados', 
+                            color: 'text-gray-500 dark:text-gray-400', 
+                            time: 'Libre', 
+                            bg: 'bg-gray-100 dark:bg-gray-800' 
+                        };
+                        return;
+                    }
+
+                    const diff = pattern.horaInicioMin - currentMinutes;
+                    
+                    if (diff > 120) {
+                        const h = Math.floor(diff / 60);
+                        const m = diff % 60;
+                        this.timerStatus = { 
+                            label: 'Operación Normal', 
+                            color: 'text-green-600 dark:text-green-400', 
+                            time: `Faltan ${h}h ${m}m`, 
+                            bg: 'bg-green-100/50 dark:bg-green-900/20' 
+                        };
+                    } else if (diff > 0 && diff <= 120) {
+                        this.timerStatus = { 
+                            label: 'Alerta Preventiva', 
+                            color: 'text-yellow-600 dark:text-yellow-500', 
+                            time: `Faltan ${diff}m`, 
+                            bg: 'bg-yellow-100/50 dark:bg-yellow-900/20' 
+                        };
+                    } else if (diff >= -pattern.duracionMin) {
+                        const remaining = pattern.duracionMin + diff;
+                        const h = Math.floor(remaining / 60);
+                        const m = remaining % 60;
+                        this.timerStatus = { 
+                            label: 'Ventana de Corte Activa', 
+                            color: 'text-red-600 dark:text-red-400', 
+                            time: `Retorno en ${h}h ${m}m`, 
+                            bg: 'bg-red-100/50 dark:bg-red-900/20 ring-1 ring-red-500/50 shadow-md' 
+                        };
+                    } else {
+                        this.timerStatus = { 
+                            label: 'Ventana superada', 
+                            color: 'text-blue-600 dark:text-blue-400', 
+                            time: 'Finalizado', 
+                            bg: 'bg-blue-100/50 dark:bg-blue-900/20' 
+                        };
+                    }
+                },
+                
+                getBadgeColor(text) {
+                    if (!text) return 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200 ring-gray-500/20';
+                    if (text.includes('🔴')) return 'bg-red-50 text-red-700 dark:bg-red-900/30 dark:text-red-400 ring-red-600/20';
+                    if (text.includes('🟠')) return 'bg-orange-50 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400 ring-orange-600/20';
+                    if (text.includes('🟡')) return 'bg-yellow-50 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-500 ring-yellow-600/20';
+                    if (text.includes('🟢')) return 'bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-400 ring-green-600/20';
+                    if (text.includes('🔵')) return 'bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 ring-blue-700/20';
+                    if (text.includes('⚪')) return 'bg-gray-50 text-gray-600 dark:bg-gray-800 dark:text-gray-400 ring-gray-500/20';
+                    return 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200 ring-gray-500/20';
+                },
+                
+                getCardRing(diaNumero) {
+                    // Convert JS day (0-6) to Notion diaNumero (1-7, where 7 is Sunday)
+                    const jsDayMapped = this.currentJsDay === 0 ? 7 : this.currentJsDay;
+                    if (diaNumero === jsDayMapped) {
+                        return 'ring-2 ring-blue-500 dark:ring-blue-500 shadow-md transform scale-[1.02] transition-transform z-10';
+                    }
+                    return 'ring-1 ring-gray-200 dark:ring-gray-700 hover:ring-gray-300 dark:hover:ring-gray-600';
+                },
+                
+                isToday(diaNumero) {
+                    const jsDayMapped = this.currentJsDay === 0 ? 7 : this.currentJsDay;
+                    return diaNumero === jsDayMapped;
+                },
+                
+                get todayData() {
+                    if (!this.data || !this.data.weekly) return null;
+                    const jsDayMapped = this.currentJsDay === 0 ? 7 : this.currentJsDay;
+                    return this.data.weekly.find(d => d.diaNumero === jsDayMapped);
+                },
+                
+                formatDate(isoString) {
+                    if (!isoString) return '';
+                    const date = new Date(isoString);
+                    return date.toLocaleString('es-ES', { 
+                        dateStyle: 'long', 
+                        timeStyle: 'short',
+                        timeZone: 'UTC' 
+                    }) + ' UTC';
+                }
+            }
+        }
+    </script>
+</body>
+</html>
