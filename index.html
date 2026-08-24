@@ -1,488 +1,557 @@
 <!DOCTYPE html>
-<html lang="es" x-data="dashboardApp()" x-init="init()" :class="{ 'dark': isDark }" class="antialiased scroll-smooth">
+<html lang="es" x-data="dashboardApp()" x-init="init()" class="scroll-smooth">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>⚡ Monitoreo Operativo de Cortes — Sanesca</title>
-    <meta name="description" content="Dashboard en tiempo real de monitoreo y predicción de cortes eléctricos de Sanesca Exhibidores. Resiliencia operativa y patrones semanales.">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>⚡ Monitoreo Operativo en Tiempo Real — Sanesca</title>
+  <meta name="description" content="Centro de control operativo y monitoreo en tiempo real de interrupciones eléctricas para la planta Sanesca Exhibidores. Predicciones, patrones semanales y resiliencia energética.">
 
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        brand: {
-                            50: '#f0fdf4',
-                            500: '#22c55e',
-                            600: '#16a34a',
-                            700: '#15803d',
-                        }
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'system-ui', 'sans-serif'],
-                        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace'],
-                    }
-                }
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#f0fdf4',
+              500: '#22c55e',
+              600: '#16a34a',
+              700: '#15803d',
             }
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            mono: ['JetBrains Mono', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace'],
+          }
         }
-    </script>
-    
-    <!-- Google Fonts: Inter -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+      }
+    }
+  </script>
 
-    <!-- Alpine.js -->
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.5/dist/cdn.min.js"></script>
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700;800&display=swap" rel="stylesheet">
 
-    <style>
-        body { font-family: 'Inter', sans-serif; }
-        code, pre { font-family: 'JetBrains Mono', monospace; }
-        .custom-scrollbar::-webkit-scrollbar { height: 6px; width: 6px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: #1e293b; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
-    </style>
+  <!-- Alpine.js Core -->
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.5/dist/cdn.min.js"></script>
+
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    code, pre, .font-mono { font-family: 'JetBrains Mono', monospace; }
+    .custom-scrollbar::-webkit-scrollbar { height: 6px; width: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: #0f172a; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+  </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col transition-colors duration-200">
-    
-    <!-- ========================================================================= -->
-    <!-- ZONA 0: HEADER UNIFICADO (COMPARTIDO CON MEDIDAS-OPERATIVAS)             -->
-    <!-- ========================================================================= -->
-    <header class="bg-slate-900/95 backdrop-blur border-b border-slate-800 sticky top-0 z-40 shadow-lg">
-        <div class="max-w-7xl mx-auto px-4 py-2.5 sm:px-6 flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <img src="assets/logo-sanesca.png" alt="Sanesca" class="h-8 w-auto object-contain" onerror="this.style.display='none'">
-                <div>
-                    <h1 class="text-white font-extrabold text-base sm:text-lg tracking-tight flex items-center gap-2">
-                        <span>⚡ Monitoreo Operativo</span>
-                        <span class="hidden sm:inline-block text-[11px] font-semibold bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded border border-amber-500/30">En Vivo</span>
-                    </h1>
-                    <p class="text-xs text-slate-400 hidden md:block">Centro de Control de Cortes de Luz y Resiliencia Energética</p>
-                </div>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col antialiased">
+
+  <!-- ========================================================================= -->
+  <!-- ZONA 0: HEADER Y NAVEGACIÓN UNIFICADA (IDÉNTICO A MEDIDAS-OPERATIVAS)    -->
+  <!-- ========================================================================= -->
+  <header class="bg-slate-900/95 backdrop-blur border-b border-slate-800 sticky top-0 z-40 shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 py-2.5 sm:px-6 flex items-center justify-between border-b border-slate-800/60">
+      <div class="flex items-center gap-3">
+        <img src="assets/logo-sanesca.png" alt="Sanesca" class="h-8 w-auto object-contain" onerror="this.style.display='none'">
+        <div>
+          <h1 class="text-white font-extrabold text-base sm:text-lg tracking-tight flex items-center gap-2">
+            <span>⚡ Monitoreo Operativo</span>
+            <span class="hidden sm:inline-block text-[11px] font-semibold bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded border border-amber-500/30">En Vivo</span>
+          </h1>
+          <p class="text-xs text-slate-400 hidden md:block">Centro de Control de Cortes de Luz y Resiliencia Energética</p>
+        </div>
+      </div>
+      
+      <!-- Navegación Cruzada hacia Medidas Operativas -->
+      <div class="flex items-center gap-2 sm:gap-3">
+        <a href="https://cazx008.github.io/medidas-operativas/"
+           class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 border border-emerald-500/30 transition shadow-sm"
+           title="Ir al Portal de Medidas Operativas y Conciliación Bilateral">
+          <span>🏭 Medidas Operativas</span>
+          <span class="text-xs">↗</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Sub-barra de Navegación Rápida a Secciones -->
+    <div class="max-w-7xl mx-auto px-4 py-1.5 overflow-x-auto custom-scrollbar flex items-center gap-1.5 text-xs whitespace-nowrap">
+      <a href="#estado-vivo" class="px-2.5 py-1 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition font-medium">⚡ Estado en Vivo</a>
+      <a href="#semaforo-semanal" class="px-2.5 py-1 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition font-medium">📊 Semáforo Semanal</a>
+      <a href="#kpis-mensuales" class="px-2.5 py-1 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition font-medium">🎛️ Control Mensual</a>
+      <a href="#progreso-anual" class="px-2.5 py-1 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition font-medium">📅 Progreso Anual</a>
+    </div>
+  </header>
+
+  <!-- ========================================================================= -->
+  <!-- ZONA 1: HERO CONTEXTUAL & INDICADOR DINÁMICO EN VIVO                     -->
+  <!-- ========================================================================= -->
+  <section id="estado-vivo" class="bg-gradient-to-b from-slate-900 via-slate-900/60 to-slate-950 border-b border-slate-800 px-4 py-6 sm:py-8">
+    <div class="max-w-7xl mx-auto">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+        
+        <!-- Contexto Izquierdo: Fecha, Título y Parámetros -->
+        <div class="lg:col-span-7 space-y-3">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-slate-800 border border-slate-700 text-slate-300">
+            <span class="w-2 h-2 rounded-full animate-ping"
+                  :class="timerStatus.pulseColor"></span>
+            <span x-text="currentTimeString || 'Cargando fecha y hora...'"></span>
+            <span class="text-[10px] text-slate-400 font-mono pl-1 border-l border-slate-700">🇻🇪 UTC-4</span>
+          </div>
+
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+            Monitoreo Predictivo de Cortes Eléctricos
+          </h2>
+          <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
+            Plataforma operativa sincronizada con la base de datos de planta. Calcula la probabilidad estadística y la <strong class="text-emerald-400 font-semibold">ventana horaria crítica</strong> del día para activar oportunamente los protocolos de contingencia y proteger los equipos.
+          </p>
+
+          <!-- Badges de parámetros de planta -->
+          <div class="flex flex-wrap items-center gap-2 pt-2 text-xs">
+            <span class="px-2.5 py-1 rounded-md bg-slate-800/80 border border-slate-700 text-slate-300 font-mono">
+              ⚡ Generador Iveco Aifo (28 kW PRP / 92A)
+            </span>
+            <span class="px-2.5 py-1 rounded-md bg-slate-800/80 border border-slate-700 text-slate-300 font-mono">
+              📊 18 Semanas (45 cortes auditados)
+            </span>
+            <span class="px-2.5 py-1 rounded-md bg-slate-800/80 border border-slate-700 text-slate-300 font-mono">
+              ⏱️ Sincronización diaria automática
+            </span>
+          </div>
+        </div>
+
+        <!-- Widget del Semáforo de Hoy -->
+        <div class="lg:col-span-5">
+          <div class="bg-slate-900 rounded-2xl p-5 border border-slate-700/80 shadow-xl relative overflow-hidden">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
+              <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Estado de Hoy</span>
+              <span class="text-xs font-mono px-2.5 py-0.5 rounded-full font-bold border"
+                    :class="getBadgeColor(todayProbability)"
+                    x-text="todayData ? todayData.probabilidad : 'Calculando...'">
+              </span>
             </div>
-            
-            <!-- Navegación Cruzada hacia medidas-operativas y Selector de Tema -->
-            <div class="flex items-center gap-2 sm:gap-3">
-                <a href="https://cazx008.github.io/medidas-operativas/"
-                   class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 border border-emerald-500/30 transition shadow-sm">
-                    <span>🏭 Medidas Operativas</span>
-                    <span class="text-xs">↗</span>
-                </a>
-                <button @click="toggleTheme()" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500" aria-label="Cambiar Tema">
-                    <!-- Sun Icon (dark active) -->
-                    <svg x-show="isDark" class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="display: none;">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
-                    </svg>
-                    <!-- Moon Icon (light active) -->
-                    <svg x-show="!isDark" class="w-4 h-4 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
-                    </svg>
-                </button>
+
+            <!-- 2 Métricas Principales del Widget -->
+            <div class="grid grid-cols-2 gap-4 text-center">
+              <!-- Reloj Predictivo -->
+              <div class="bg-slate-950/60 rounded-xl p-3 border border-slate-800 flex flex-col justify-center">
+                <span class="text-[11px] text-slate-400 block mb-1 uppercase font-semibold tracking-wider" :class="timerStatus.color" x-text="timerStatus.label"></span>
+                <span class="text-2xl sm:text-3xl font-black text-white font-mono" x-text="timerStatus.time"></span>
+                <span class="text-[10px] text-slate-500 block mt-1" x-text="todayData?.diaNumero === 7 ? 'Día libre de cortes' : 'Reloj en tiempo real'"></span>
+              </div>
+              <!-- Ventana Típica -->
+              <div class="bg-slate-950/60 rounded-xl p-3 border border-slate-800 flex flex-col justify-center">
+                <span class="text-[11px] text-slate-400 block mb-1 uppercase font-semibold tracking-wider">Ventana de Riesgo</span>
+                <span class="text-xs sm:text-sm font-bold text-amber-300 font-mono block mt-1" x-text="todayData?.ventanaRiesgo || '—'"></span>
+                <span class="text-[10px] text-slate-500 block mt-1" x-text="todayData?.duracionProm ? ('Duración media: ' + todayData.duracionProm) : 'Sin registros'"></span>
+              </div>
             </div>
-        </div>
-    </header>
 
-    <main class="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 flex-grow flex flex-col space-y-8">
-
-        <!-- Loading State -->
-        <div x-show="loading" class="flex flex-col items-center justify-center py-20">
-            <svg class="animate-spin h-10 w-10 text-emerald-500 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
-            <p class="text-slate-400 font-medium">Cargando datos del dashboard en vivo...</p>
+            <!-- Parámetros Rápidos de Hoy -->
+            <div class="mt-4 pt-3 border-t border-slate-800 flex items-center justify-between text-xs font-mono">
+              <span class="text-slate-400">⚡ Inicio: <strong class="text-white" x-text="todayData?.horaCorteFmt || '—'"></strong></span>
+              <span class="text-slate-400">🔌 Retorno: <strong class="text-white" x-text="todayData?.horaRetornoFmt || '—'"></strong></span>
+              <span class="text-slate-400">📊 <strong class="text-emerald-400" x-text="todayData?.pctTotal || '0%'"></strong> total</span>
+            </div>
+          </div>
         </div>
 
-        <!-- Error State -->
-        <div x-show="error" style="display: none;" class="bg-red-950/40 border border-red-800/60 rounded-xl p-6 text-center">
-            <div class="text-red-400 text-4xl mb-2">⚠️</div>
-            <h3 class="text-lg font-bold text-red-300 mb-1">Error de conexión</h3>
-            <p class="text-red-400 text-sm" x-text="error"></p>
-            <button @click="init()" class="mt-4 px-4 py-2 bg-red-900/60 hover:bg-red-800 text-red-200 border border-red-700/60 rounded-lg text-xs font-semibold transition">Reintentar</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- CONTENIDO PRINCIPAL                                                      -->
+  <!-- ========================================================================= -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 py-8 space-y-14">
+
+    <!-- Loading State -->
+    <div x-show="loading" class="flex flex-col items-center justify-center py-16">
+      <svg class="animate-spin h-10 w-10 text-emerald-500 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+      </svg>
+      <p class="text-slate-400 text-sm font-medium">Sincronizando datos de Notion API...</p>
+    </div>
+
+    <!-- Error State -->
+    <div x-show="error" style="display: none;" class="bg-rose-950/40 border border-rose-800/60 rounded-xl p-6 text-center">
+      <div class="text-rose-400 text-3xl mb-2">⚠️</div>
+      <h3 class="text-base font-bold text-rose-300 mb-1">Error de sincronización</h3>
+      <p class="text-rose-400 text-xs" x-text="error"></p>
+      <button @click="init()" class="mt-4 px-4 py-2 bg-rose-900/60 hover:bg-rose-800 text-rose-200 border border-rose-700/60 rounded-lg text-xs font-semibold transition">Reintentar</button>
+    </div>
+
+    <div x-show="!loading && !error" style="display: none;" class="space-y-14">
+
+      <!-- ===================================================================== -->
+      <!-- MÓDULO 1: SEMÁFORO DE RIESGO OPERATIVO SEMANAL (7 DÍAS)              -->
+      <!-- ===================================================================== -->
+      <section id="semaforo-semanal" class="scroll-mt-36 space-y-6">
+        <div class="border-l-4 border-emerald-500 pl-4">
+          <div class="flex items-center justify-between flex-wrap gap-2">
+            <h3 class="text-xl sm:text-2xl font-extrabold text-white">Semáforo de Riesgo Operativo Semanal</h3>
+            <span class="text-xs text-slate-400 font-mono">Lunes a Domingo · 18 Semanas Observadas</span>
+          </div>
+          <p class="text-slate-400 text-sm">Distribución jerárquica de la vulnerabilidad eléctrica para planificar turnos continuos y el uso de maquinaria pesada.</p>
         </div>
 
-        <!-- Dashboard Content -->
-        <div x-show="!loading && !error" style="display: none;" class="space-y-8">
-            
-            <!-- ZONE 1: Live Status Bar -->
-            <section class="bg-slate-900/80 rounded-2xl shadow-xl border border-slate-800 p-6 sm:p-8">
-                <div class="flex flex-col md:flex-row md:items-end justify-between mb-6 gap-4">
-                    <div>
-                        <div class="flex items-center gap-2 mb-1">
-                            <h2 class="text-xs font-bold tracking-wider text-emerald-400 uppercase">Estado Operativo en Tiempo Real</h2>
-                            <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-slate-800 text-slate-300 border border-slate-700">
-                                🇻🇪 Hora Venezuela (UTC-4)
-                            </span>
-                        </div>
-                        <div class="text-2xl sm:text-3xl font-extrabold text-white capitalize tracking-tight" x-text="currentTimeString"></div>
-                    </div>
+        <!-- Grid de Tarjetas Semanales -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-7 gap-3.5">
+          <template x-for="day in data?.weekly" :key="day.diaNumero">
+            <div class="bg-slate-900 rounded-xl p-4 relative flex flex-col justify-between border border-slate-800 hover:border-slate-700 transition shadow-sm"
+                 :class="getCardRing(day.diaNumero)">
+              
+              <!-- Badge de HOY -->
+              <div x-show="isToday(day.diaNumero)" class="absolute -top-2.5 -right-2 bg-emerald-500 text-slate-950 text-[10px] font-black px-2 py-0.5 rounded-full shadow-lg border border-emerald-300 flex items-center gap-1">
+                <span class="w-1.5 h-1.5 rounded-full bg-slate-950 animate-pulse"></span> HOY
+              </div>
+
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <h4 class="font-bold text-white text-sm" x-text="day.dia"></h4>
+                  <span class="text-[10px] font-mono text-slate-500" x-text="day.conteo ? (day.conteo + ' cortes') : '0'"></span>
                 </div>
 
-                <!-- 3 Hero Cards -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-6">
-                    <!-- Timer Card -->
-                    <div class="flex flex-col p-5 rounded-xl border border-slate-800 shadow-md transition-colors" :class="timerStatus.bg">
-                        <span class="text-xs font-bold uppercase tracking-wider mb-2" :class="timerStatus.color" x-text="timerStatus.label"></span>
-                        <div class="text-3xl font-black text-white flex items-center gap-3">
-                            <span>⏱️</span> <span x-text="timerStatus.time"></span>
-                        </div>
-                    </div>
+                <span class="inline-flex mb-3 px-2 py-0.5 rounded text-[11px] font-bold border font-mono"
+                      :class="getBadgeColor(day.probabilidad)"
+                      x-text="day.probabilidad"></span>
 
-                    <!-- Probability Card -->
-                    <div class="flex flex-col p-5 rounded-xl border border-slate-800 shadow-md bg-slate-950/60">
-                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Probabilidad de Hoy</span>
-                        <div class="text-lg font-bold mt-auto">
-                            <span class="inline-flex items-center px-3 py-1 rounded-lg text-sm font-semibold border" :class="getBadgeColor(todayProbability)" x-text="todayProbability"></span>
-                        </div>
-                    </div>
-
-                    <!-- Pattern Card -->
-                    <div class="flex flex-col p-5 rounded-xl border border-slate-800 shadow-md bg-slate-950/60">
-                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Patrón de Hoy</span>
-                        <div class="text-lg font-bold text-white mt-auto">
-                            <span x-text="todayPatternText"></span>
-                        </div>
-                    </div>
+                <div class="space-y-2 text-xs font-mono bg-slate-950/60 p-2.5 rounded-lg border border-slate-800/80 mb-3">
+                  <div class="flex justify-between items-center">
+                    <span class="text-slate-400 text-[11px]">⚡ Corte:</span>
+                    <span class="font-bold text-amber-300" x-text="day.horaCorteFmt"></span>
+                  </div>
+                  <div class="flex justify-between items-center">
+                    <span class="text-slate-400 text-[11px]">🔌 Retorno:</span>
+                    <span class="font-bold text-emerald-300" x-text="day.horaRetornoFmt"></span>
+                  </div>
+                  <div class="flex justify-between items-center border-t border-slate-800 pt-1.5">
+                    <span class="text-slate-400 text-[11px]">⏱️ Media:</span>
+                    <span class="font-bold text-slate-200" x-text="day.duracionProm"></span>
+                  </div>
                 </div>
+              </div>
 
-                <!-- Today's Stats Row -->
-                <div class="border-t border-slate-800/80 pt-5" x-show="todayData">
-                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                        <div class="bg-slate-950/40 p-3 rounded-lg border border-slate-800/60">
-                            <p class="text-xs text-slate-400">Hora Prom. Corte</p>
-                            <p class="text-base font-bold text-white flex items-center gap-1 mt-0.5">
-                                <span class="text-amber-400">⚡</span> <span x-text="todayData?.horaCorteFmt"></span>
-                            </p>
-                        </div>
-                        <div class="bg-slate-950/40 p-3 rounded-lg border border-slate-800/60">
-                            <p class="text-xs text-slate-400">Hora Prom. Retorno</p>
-                            <p class="text-base font-bold text-white flex items-center gap-1 mt-0.5">
-                                <span class="text-emerald-400">🔌</span> <span x-text="todayData?.horaRetornoFmt"></span>
-                            </p>
-                        </div>
-                        <div class="bg-slate-950/40 p-3 rounded-lg border border-slate-800/60">
-                            <p class="text-xs text-slate-400">Ventana de Riesgo</p>
-                            <p class="text-base font-bold text-white flex items-center gap-1 mt-0.5">
-                                <span>⚠️</span> <span x-text="todayData?.ventanaRiesgo"></span>
-                            </p>
-                        </div>
-                        <div class="bg-slate-950/40 p-3 rounded-lg border border-slate-800/60">
-                            <p class="text-xs text-slate-400">Duración Estimada</p>
-                            <p class="text-base font-bold text-white flex items-center gap-1 mt-0.5">
-                                <span>⏱️</span> <span x-text="todayData?.duracionProm"></span>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- ZONE 2: Weekly Cards Grid -->
-            <section>
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-base sm:text-lg font-extrabold text-white flex items-center gap-2">
-                        <span>📊</span> Semáforo de Riesgo Operativo Semanal
-                    </h3>
-                    <span class="text-xs font-medium text-slate-400">Lunes a Domingo · 18 Semanas</span>
-                </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-7 gap-3.5">
-                    <template x-for="day in data?.weekly" :key="day.diaNumero">
-                        <div class="bg-slate-900/80 rounded-xl p-4 relative flex flex-col transition-all border border-slate-800" :class="getCardRing(day.diaNumero)">
-                            <!-- Today Badge -->
-                            <div x-show="isToday(day.diaNumero)" class="absolute -top-2.5 -right-2 bg-emerald-600 text-white text-[10px] font-black px-2 py-0.5 rounded-full shadow-lg border border-emerald-400 flex items-center gap-1">
-                                <span class="animate-pulse">●</span> HOY
-                            </div>
-                            
-                            <h4 class="font-extrabold text-white mb-2 text-sm" x-text="day.dia"></h4>
-                            
-                            <span class="inline-flex mb-3 px-2 py-1 rounded text-xs font-bold border w-fit" 
-                                  :class="getBadgeColor(day.probabilidad)" 
-                                  x-text="day.probabilidad"></span>
-                            
-                            <div class="space-y-2 mt-auto mb-3 text-xs">
-                                <div class="flex justify-between">
-                                    <span class="text-slate-400" title="Hora Promedio de Corte">⚡ Corte</span>
-                                    <span class="font-bold text-white" x-text="day.horaCorteFmt"></span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span class="text-slate-400" title="Hora Promedio de Retorno">🔌 Retorno</span>
-                                    <span class="font-bold text-white" x-text="day.horaRetornoFmt"></span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span class="text-slate-400" title="Duración Promedio">⏱️ Duración</span>
-                                    <span class="font-bold text-white" x-text="day.duracionProm"></span>
-                                </div>
-                            </div>
-
-                            <div class="pt-2.5 border-t border-slate-800 flex justify-between items-center text-[11px] text-slate-400">
-                                <div><span class="font-extrabold text-slate-200" x-text="day.pctTotal"></span> total</div>
-                                <div x-text="day.conteo ? `${day.conteo} cortes` : '—'"></div>
-                            </div>
-                        </div>
-                    </template>
-                </div>
-            </section>
-
-            <!-- ZONE 3: Monthly Statistics -->
-            <section class="bg-slate-900/80 rounded-2xl shadow-xl border border-slate-800 p-6 sm:p-8">
-                <h3 class="text-base sm:text-lg font-extrabold text-white mb-6 flex items-center gap-2">
-                    <span>🎛️</span> <span x-text="data?.monthly?.panel"></span>
-                </h3>
-                
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-6">
-                    <!-- Cortes del Mes -->
-                    <div class="bg-slate-950/50 p-4 rounded-xl border border-slate-800/80">
-                        <div class="text-xs font-semibold text-slate-400 mb-1 flex items-center gap-2">
-                            <span>⚡</span> Cortes del Mes
-                        </div>
-                        <div class="text-2xl font-extrabold text-white" x-text="data?.monthly?.cortesDelMes ?? '12'"></div>
-                    </div>
-                    
-                    <!-- Horas Planta -->
-                    <div class="bg-slate-950/50 p-4 rounded-xl border border-slate-800/80">
-                        <div class="text-xs font-semibold text-slate-400 mb-1 flex items-center gap-2">
-                            <span>🕐</span> Horas Planta (Mes)
-                        </div>
-                        <div class="text-2xl font-extrabold text-white" x-text="data?.monthly?.totalHorasPlanta || '0 hrs'"></div>
-                    </div>
-
-                    <!-- Frecuencia -->
-                    <div class="bg-slate-950/50 p-4 rounded-xl border border-slate-800/80">
-                        <div class="text-xs font-semibold text-slate-400 mb-1 flex items-center gap-2">
-                            <span>📊</span> Frecuencia Semanal
-                        </div>
-                        <div class="text-lg font-extrabold text-white pt-1" x-text="data?.monthly?.frecuenciaSemanal || '—'"></div>
-                    </div>
-
-                    <!-- Estrés Energético -->
-                    <div class="bg-slate-950/50 p-4 rounded-xl border border-slate-800/80">
-                        <div class="text-xs font-semibold text-slate-400 mb-1 flex items-center gap-2">
-                            <span>🌡️</span> Estrés Energético
-                        </div>
-                        <div class="text-xs font-bold pt-1">
-                            <span class="inline-flex px-2.5 py-1 rounded-md border" :class="getBadgeColor(data?.monthly?.estresEnergetico)" x-text="data?.monthly?.estresEnergetico || '—'"></span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Progreso Anual -->
-                <div class="border-t border-slate-800 pt-5">
-                    <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Progreso Anual</p>
-                    <div class="bg-slate-950 rounded-xl p-3 font-mono text-xs sm:text-sm overflow-x-auto whitespace-nowrap text-emerald-300 border border-slate-800/80" x-text="data?.monthly?.progresoAnual"></div>
-                </div>
-                
-                <!-- Context Footer -->
-                <div class="mt-5 flex flex-col sm:flex-row sm:justify-between text-xs text-slate-500">
-                    <div x-text="`Última sincronización: ${formatDate(data?.buildTimestamp)}`"></div>
-                    <div x-text="`Período de observación: ${data?.weekly?.[0]?.semanasObservadas || 18} semanas auditadas`"></div>
-                </div>
-            </section>
-
+              <div class="pt-2 border-t border-slate-800/80 flex justify-between items-center text-[11px] text-slate-400 font-mono">
+                <span>Peso semanal:</span>
+                <span class="font-bold text-slate-200" x-text="day.pctTotal"></span>
+              </div>
+            </div>
+          </template>
         </div>
-    </main>
+      </section>
 
-    <!-- ZONE 4: Footer -->
-    <footer class="mt-auto py-6 text-center text-xs text-slate-500 border-t border-slate-900 bg-slate-950">
-        <p class="font-semibold text-slate-400">Sanesca Exhibidores · Monitoreo Operativo de Cortes Eléctricos</p>
-        <p class="mt-1 text-[11px] text-slate-600">Sincronización Notion API · Alojado en GitHub Pages</p>
-    </footer>
+      <!-- ===================================================================== -->
+      <!-- MÓDULO 2: CONTROL Y ESTADÍSTICAS MENSUALES EN VIVO                    -->
+      <!-- ===================================================================== -->
+      <section id="kpis-mensuales" class="scroll-mt-36 space-y-6">
+        <div class="border-l-4 border-amber-500 pl-4">
+          <div class="flex items-center justify-between flex-wrap gap-2">
+            <h3 class="text-xl sm:text-2xl font-extrabold text-white">Panel de Control y Métricas Mensuales</h3>
+            <span class="text-xs text-slate-400 font-mono">Sincronizado vía Notion API</span>
+          </div>
+          <p class="text-slate-400 text-sm">Monitoreo de horas planta acumuladas, tasa de frecuencia y termómetro de estrés energético del mes.</p>
+        </div>
 
-    <!-- Application Logic -->
-    <script>
-        function dashboardApp() {
-            return {
-                isDark: true, // Default to matching slate-950 theme
-                
-                toggleTheme() {
-                    this.isDark = !this.isDark;
-                },
-                
-                data: null,
-                loading: true,
-                error: null,
-                currentTimeString: '',
-                timerStatus: { label: '', color: '', time: '', bg: '' },
-                currentJsDay: 1, // Default Lunes
-                
-                init() {
-                    this.updateTime();
-                    setInterval(() => { 
-                        this.updateTime(); 
-                        this.updateTimer(); 
-                    }, 60000);
-                    
-                    fetch('data/dashboard.json')
-                        .then(res => {
-                            if (!res.ok) throw new Error(`HTTP ${res.status}`);
-                            return res.json();
-                        })
-                        .then(json => {
-                            this.data = json;
-                            this.loading = false;
-                            this.updateTime();
-                            this.updateTimer();
-                        })
-                        .catch(err => {
-                            console.error("Fetch error:", err);
-                            this.error = 'No se pudieron cargar los datos. ' + err.message;
-                            this.loading = false;
-                        });
-                },
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <!-- Cortes del Mes -->
+          <div class="bg-slate-900 rounded-xl p-5 border border-slate-800 hover:border-slate-700 transition flex flex-col justify-between shadow-sm">
+            <div class="flex items-center gap-3 mb-3">
+              <span class="text-2xl">⚡</span>
+              <div>
+                <h4 class="font-bold text-white text-sm">Cortes del Mes</h4>
+                <span class="text-[11px] text-amber-400 font-semibold">Eventos registrados</span>
+              </div>
+            </div>
+            <div class="text-3xl font-black text-white font-mono" x-text="data?.monthly?.cortesDelMes ?? '12'"></div>
+            <p class="text-slate-400 text-xs mt-2">Mes calendario en curso</p>
+          </div>
 
-                getVenezuelaTime() {
-                    const now = new Date();
-                    const parts = new Intl.DateTimeFormat('en-US', {
-                        timeZone: 'America/Caracas',
-                        weekday: 'short',
-                        hour: 'numeric',
-                        minute: 'numeric',
-                        hourCycle: 'h23'
-                    }).formatToParts(now);
+          <!-- Horas Planta -->
+          <div class="bg-slate-900 rounded-xl p-5 border border-slate-800 hover:border-slate-700 transition flex flex-col justify-between shadow-sm">
+            <div class="flex items-center gap-3 mb-3">
+              <span class="text-2xl">🕐</span>
+              <div>
+                <h4 class="font-bold text-white text-sm">Horas Planta</h4>
+                <span class="text-[11px] text-emerald-400 font-semibold">Generador activo</span>
+              </div>
+            </div>
+            <div class="text-3xl font-black text-white font-mono" x-text="data?.monthly?.totalHorasPlanta || '0 hrs'"></div>
+            <p class="text-slate-400 text-xs mt-2">Acumulado mensual para control de combustible</p>
+          </div>
 
-                    const getPart = type => parts.find(p => p.type === type)?.value;
-                    const hour = parseInt(getPart('hour') || '0', 10);
-                    const minute = parseInt(getPart('minute') || '0', 10);
-                    const weekday = getPart('weekday');
-                    
-                    const dayMap = { 'Sun': 0, 'Mon': 1, 'Tue': 2, 'Wed': 3, 'Thu': 4, 'Fri': 5, 'Sat': 6 };
-                    const jsDay = dayMap[weekday] ?? 0;
-                    const currentMinutes = hour * 60 + minute;
+          <!-- Frecuencia Semanal -->
+          <div class="bg-slate-900 rounded-xl p-5 border border-slate-800 hover:border-slate-700 transition flex flex-col justify-between shadow-sm">
+            <div class="flex items-center gap-3 mb-3">
+              <span class="text-2xl">📊</span>
+              <div>
+                <h4 class="font-bold text-white text-sm">Frecuencia Semanal</h4>
+                <span class="text-[11px] text-blue-400 font-semibold">Tasa de fallas</span>
+              </div>
+            </div>
+            <div class="text-xl font-extrabold text-white font-mono pt-1" x-text="data?.monthly?.frecuenciaSemanal || '—'"></div>
+            <p class="text-slate-400 text-xs mt-2">Proyección sobre semanas transcurridas</p>
+          </div>
 
-                    return { jsDay, currentMinutes, hour, minute };
-                },
-                
-                updateTime() {
-                    const vzla = this.getVenezuelaTime();
-                    this.currentJsDay = vzla.jsDay;
+          <!-- Estrés Energético -->
+          <div class="bg-slate-900 rounded-xl p-5 border border-slate-800 hover:border-slate-700 transition flex flex-col justify-between shadow-sm">
+            <div class="flex items-center gap-3 mb-3">
+              <span class="text-2xl">🌡️</span>
+              <div>
+                <h4 class="font-bold text-white text-sm">Estrés Energético</h4>
+                <span class="text-[11px] text-amber-400 font-semibold">Termómetro de planta</span>
+              </div>
+            </div>
+            <div class="pt-1">
+              <span class="inline-flex px-2.5 py-1 rounded-md border text-xs font-mono font-bold"
+                    :class="getBadgeColor(data?.monthly?.estresEnergetico)"
+                    x-text="data?.monthly?.estresEnergetico || '—'"></span>
+            </div>
+            <p class="text-slate-400 text-xs mt-2">Desviación vs media histórica (3.6 cortes/sem)</p>
+          </div>
+        </div>
+      </section>
 
-                    const now = new Date();
-                    const options = { 
-                        timeZone: 'America/Caracas',
-                        weekday: 'long', 
-                        year: 'numeric', 
-                        month: 'long', 
-                        day: 'numeric', 
-                        hour: 'numeric', 
-                        minute: '2-digit',
-                        hour12: true 
-                    };
-                    let str = now.toLocaleDateString('es-VE', options);
-                    str = str.replace(',', ' ·').replace(/^\w/, c => c.toUpperCase());
-                    this.currentTimeString = str;
-                },
-                
-                updateTimer() {
-                    if (!this.data || !this.data.patronesPorDia) return;
-                    
-                    const vzla = this.getVenezuelaTime();
-                    const pattern = this.data.patronesPorDia[vzla.jsDay.toString()];
+      <!-- ===================================================================== -->
+      <!-- MÓDULO 3: PROGRESO Y HORIZONTE ANUAL                                 -->
+      <!-- ===================================================================== -->
+      <section id="progreso-anual" class="scroll-mt-36 space-y-6">
+        <div class="border-l-4 border-blue-500 pl-4">
+          <h3 class="text-xl sm:text-2xl font-extrabold text-white">Horizonte Operativo Anual</h3>
+          <p class="text-slate-400 text-sm">Consumo de semanas calendario del año operativo y métricas de auditoría.</p>
+        </div>
 
-                    if (!pattern || pattern.horaInicioMin === 0) {
-                        this.timerStatus = { 
-                            label: 'Sin cortes programados', 
-                            color: 'text-slate-400', 
-                            time: 'Libre', 
-                            bg: 'bg-slate-900/60' 
-                        };
-                        return;
-                    }
+        <div class="bg-slate-900 rounded-2xl p-6 border border-slate-800 shadow-xl space-y-4">
+          <div class="flex items-center justify-between flex-wrap gap-2">
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Progreso Anual Consolidado</span>
+            <span class="text-xs font-mono text-emerald-400">Semana Epidemiológica / Operativa</span>
+          </div>
 
-                    const diff = pattern.horaInicioMin - vzla.currentMinutes;
-                    
-                    if (diff > 120) {
-                        const h = Math.floor(diff / 60);
-                        const m = diff % 60;
-                        this.timerStatus = { 
-                            label: 'Operación Normal', 
-                            color: 'text-emerald-400', 
-                            time: `Faltan ${h}h ${m}m`, 
-                            bg: 'bg-emerald-950/30 border-emerald-800/50' 
-                        };
-                    } else if (diff > 0 && diff <= 120) {
-                        this.timerStatus = { 
-                            label: 'Alerta Preventiva', 
-                            color: 'text-amber-400', 
-                            time: `Faltan ${diff}m`, 
-                            bg: 'bg-amber-950/30 border-amber-800/50' 
-                        };
-                    } else if (diff >= -pattern.duracionMin) {
-                        const remaining = pattern.duracionMin + diff;
-                        const h = Math.floor(remaining / 60);
-                        const m = remaining % 60;
-                        this.timerStatus = { 
-                            label: 'Ventana de Corte Activa', 
-                            color: 'text-rose-400', 
-                            time: `Retorno en ${h}h ${m}m`, 
-                            bg: 'bg-rose-950/40 border-rose-700/60 ring-1 ring-rose-500/40' 
-                        };
-                    } else {
-                        const elapsed = Math.floor(Math.abs(diff + pattern.duracionMin) / 60);
-                        this.timerStatus = { 
-                            label: 'Ventana superada', 
-                            color: 'text-cyan-400', 
-                            time: `Superada (+${elapsed}h)`, 
-                            bg: 'bg-cyan-950/30 border-cyan-800/50' 
-                        };
-                    }
-                },
-                
-                getBadgeColor(text) {
-                    if (!text) return 'bg-slate-800 text-slate-300 border-slate-700';
-                    if (text.includes('🔴')) return 'bg-rose-950/50 text-rose-300 border-rose-800/60';
-                    if (text.includes('🟠')) return 'bg-amber-950/50 text-amber-300 border-amber-800/60';
-                    if (text.includes('🟡')) return 'bg-yellow-950/50 text-yellow-300 border-yellow-800/60';
-                    if (text.includes('🟢')) return 'bg-emerald-950/50 text-emerald-300 border-emerald-800/60';
-                    if (text.includes('🔵')) return 'bg-cyan-950/50 text-cyan-300 border-cyan-800/60';
-                    if (text.includes('⚪')) return 'bg-slate-800 text-slate-400 border-slate-700';
-                    return 'bg-slate-800 text-slate-300 border-slate-700';
-                },
-                
-                getCardRing(diaNumero) {
-                    const jsDayMapped = this.currentJsDay === 0 ? 7 : this.currentJsDay;
-                    if (diaNumero === jsDayMapped) {
-                        return 'ring-2 ring-emerald-500 shadow-xl bg-emerald-950/20 border-emerald-500/50 transform scale-[1.02] z-10';
-                    }
-                    return 'hover:border-slate-700';
-                },
-                
-                isToday(diaNumero) {
-                    const jsDayMapped = this.currentJsDay === 0 ? 7 : this.currentJsDay;
-                    return diaNumero === jsDayMapped;
-                },
-                
-                get todayData() {
-                    if (!this.data || !this.data.weekly) return null;
-                    const jsDayMapped = this.currentJsDay === 0 ? 7 : this.currentJsDay;
-                    return this.data.weekly.find(d => d.diaNumero === jsDayMapped);
-                },
+          <div class="bg-slate-950 rounded-xl p-4 font-mono text-xs sm:text-sm overflow-x-auto whitespace-nowrap text-emerald-300 border border-slate-800/80 shadow-inner"
+               x-text="data?.monthly?.progresoAnual"></div>
 
-                get todayProbability() {
-                    const t = this.todayData;
-                    if (!t) return this.data?.monthly?.probabilidadDeHoy || '—';
-                    if (t.diaNumero === 7) return '⚪ Ninguna: Domingo — 0 cortes';
-                    return `${t.probabilidad} (${t.conteo} cortes en ${t.semanasObservadas}s) — ${t.dia}`;
-                },
+          <div class="flex flex-col sm:flex-row sm:justify-between text-xs text-slate-500 pt-2 border-t border-slate-800 font-mono">
+            <div x-text="`Última sincronización con Notion: ${formatDate(data?.buildTimestamp)}`"></div>
+            <div x-text="`Base de auditoría: ${data?.weekly?.[0]?.semanasObservadas || 18} semanas consolidadas`"></div>
+          </div>
+        </div>
+      </section>
 
-                get todayPatternText() {
-                    const t = this.todayData;
-                    if (!t) return this.data?.monthly?.patronDeHoy || '—';
-                    if (t.diaNumero === 7) return 'Domingo · Sin cortes programados';
-                    return `${t.dia} · Patrón: ${t.horaCorteFmt} (${t.duracionProm})`;
-                },
-                
-                formatDate(isoString) {
-                    if (!isoString) return 'Hoy';
-                    const date = new Date(isoString);
-                    return date.toLocaleString('es-VE', { 
-                        dateStyle: 'medium', 
-                        timeStyle: 'short',
-                        timeZone: 'America/Caracas' 
-                    });
-                }
-            }
+    </div>
+  </main>
+
+  <!-- ========================================================================= -->
+  <!-- ZONA 4: FOOTER UNIFICADO                                                 -->
+  <!-- ========================================================================= -->
+  <footer class="mt-auto py-8 text-center text-xs text-slate-500 border-t border-slate-900 bg-slate-950">
+    <div class="max-w-7xl mx-auto px-4 space-y-2">
+      <p class="font-semibold text-slate-300">Sanesca Exhibidores · Sistema Integrado de Mantenimiento y Resiliencia Energética</p>
+      <p class="text-slate-500">
+        <a href="https://cazx008.github.io/sanesca-dashboard/" class="text-emerald-400 hover:underline">Dashboard en Vivo</a>
+        <span class="mx-2">·</span>
+        <a href="https://cazx008.github.io/medidas-operativas/" class="text-emerald-400 hover:underline">Medidas Operativas & Conciliación</a>
+      </p>
+      <p class="text-[11px] text-slate-600 pt-1">Sincronización automatizada con Notion API · Desplegado en GitHub Pages</p>
+    </div>
+  </footer>
+
+  <!-- ========================================================================= -->
+  <!-- LÓGICA ALPINE.JS                                                          -->
+  <!-- ========================================================================= -->
+  <script>
+    function dashboardApp() {
+      return {
+        data: null,
+        loading: true,
+        error: null,
+        currentTimeString: '',
+        timerStatus: { label: '', color: '', time: '', bg: '', pulseColor: 'bg-emerald-400' },
+        currentJsDay: 1, // Default Lunes
+
+        init() {
+          this.updateTime();
+          setInterval(() => {
+            this.updateTime();
+            this.updateTimer();
+          }, 60000);
+
+          fetch('data/dashboard.json')
+            .then(res => {
+              if (!res.ok) throw new Error(`HTTP ${res.status}`);
+              return res.json();
+            })
+            .then(json => {
+              this.data = json;
+              this.loading = false;
+              this.updateTime();
+              this.updateTimer();
+            })
+            .catch(err => {
+              console.error("Fetch error:", err);
+              this.error = 'No se pudieron cargar los datos. ' + err.message;
+              this.loading = false;
+            });
+        },
+
+        getVenezuelaTime() {
+          const now = new Date();
+          const parts = new Intl.DateTimeFormat('en-US', {
+            timeZone: 'America/Caracas',
+            weekday: 'short',
+            hour: 'numeric',
+            minute: 'numeric',
+            hourCycle: 'h23'
+          }).formatToParts(now);
+
+          const getPart = type => parts.find(p => p.type === type)?.value;
+          const hour = parseInt(getPart('hour') || '0', 10);
+          const minute = parseInt(getPart('minute') || '0', 10);
+          const weekday = getPart('weekday');
+
+          const dayMap = { 'Sun': 0, 'Mon': 1, 'Tue': 2, 'Wed': 3, 'Thu': 4, 'Fri': 5, 'Sat': 6 };
+          const jsDay = dayMap[weekday] ?? 0;
+          const currentMinutes = hour * 60 + minute;
+
+          return { jsDay, currentMinutes, hour, minute };
+        },
+
+        updateTime() {
+          const vzla = this.getVenezuelaTime();
+          this.currentJsDay = vzla.jsDay;
+
+          const now = new Date();
+          const options = {
+            timeZone: 'America/Caracas',
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: 'numeric',
+            minute: '2-digit',
+            hour12: true
+          };
+          let str = now.toLocaleDateString('es-VE', options);
+          str = str.replace(',', ' ·').replace(/^\w/, c => c.toUpperCase());
+          this.currentTimeString = str;
+        },
+
+        updateTimer() {
+          if (!this.data || !this.data.patronesPorDia) return;
+
+          const vzla = this.getVenezuelaTime();
+          const pattern = this.data.patronesPorDia[vzla.jsDay.toString()];
+
+          if (!pattern || pattern.horaInicioMin === 0) {
+            this.timerStatus = {
+              label: 'Sin cortes programados',
+              color: 'text-slate-400',
+              time: 'Libre',
+              bg: 'bg-slate-900/60',
+              pulseColor: 'bg-emerald-400'
+            };
+            return;
+          }
+
+          const diff = pattern.horaInicioMin - vzla.currentMinutes;
+
+          if (diff > 120) {
+            const h = Math.floor(diff / 60);
+            const m = diff % 60;
+            this.timerStatus = {
+              label: 'Operación Normal',
+              color: 'text-emerald-400',
+              time: `Faltan ${h}h ${m}m`,
+              bg: 'bg-emerald-950/30 border-emerald-800/50',
+              pulseColor: 'bg-emerald-400'
+            };
+          } else if (diff > 0 && diff <= 120) {
+            this.timerStatus = {
+              label: 'Alerta Preventiva',
+              color: 'text-amber-400',
+              time: `Faltan ${diff}m`,
+              bg: 'bg-amber-950/30 border-amber-800/50',
+              pulseColor: 'bg-amber-400'
+            };
+          } else if (diff >= -pattern.duracionMin) {
+            const remaining = pattern.duracionMin + diff;
+            const h = Math.floor(remaining / 60);
+            const m = remaining % 60;
+            this.timerStatus = {
+              label: 'Ventana de Riesgo Activa',
+              color: 'text-rose-400',
+              time: `Retorno en ${h}h ${m}m`,
+              bg: 'bg-rose-950/40 border-rose-700/60 ring-1 ring-rose-500/40',
+              pulseColor: 'bg-rose-500'
+            };
+          } else {
+            const elapsed = Math.floor(Math.abs(diff + pattern.duracionMin) / 60);
+            this.timerStatus = {
+              label: 'Ventana superada',
+              color: 'text-blue-400',
+              time: `Superada (+${elapsed}h)`,
+              bg: 'bg-blue-950/30 border-blue-800/50',
+              pulseColor: 'bg-blue-400'
+            };
+          }
+        },
+
+        getBadgeColor(text) {
+          if (!text) return 'bg-slate-800 text-slate-300 border-slate-700';
+          if (text.includes('🔴') || text.includes('Crítico') || text.includes('Muy Alta')) return 'bg-rose-500/20 text-rose-300 border-rose-500/30';
+          if (text.includes('🟠') || text.includes('Alta') || text.includes('Alerta')) return 'bg-amber-500/20 text-amber-300 border-amber-500/30';
+          if (text.includes('🟡') || text.includes('Medio') || text.includes('Moderado')) return 'bg-yellow-500/20 text-yellow-300 border-yellow-500/30';
+          if (text.includes('🟢') || text.includes('Baja') || text.includes('Estable')) return 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30';
+          if (text.includes('🔵')) return 'bg-blue-500/20 text-blue-300 border-blue-500/30';
+          if (text.includes('⚪') || text.includes('Ninguna')) return 'bg-slate-800 text-slate-400 border-slate-700';
+          return 'bg-slate-800 text-slate-300 border-slate-700';
+        },
+
+        getCardRing(diaNumero) {
+          const jsDayMapped = this.currentJsDay === 0 ? 7 : this.currentJsDay;
+          if (diaNumero === jsDayMapped) {
+            return 'ring-2 ring-emerald-500 shadow-xl bg-slate-900 border-emerald-500/70 transform scale-[1.02] z-10';
+          }
+          return 'hover:border-slate-700';
+        },
+
+        isToday(diaNumero) {
+          const jsDayMapped = this.currentJsDay === 0 ? 7 : this.currentJsDay;
+          return diaNumero === jsDayMapped;
+        },
+
+        get todayData() {
+          if (!this.data || !this.data.weekly) return null;
+          const jsDayMapped = this.currentJsDay === 0 ? 7 : this.currentJsDay;
+          return this.data.weekly.find(d => d.diaNumero === jsDayMapped);
+        },
+
+        get todayProbability() {
+          const t = this.todayData;
+          if (!t) return this.data?.monthly?.probabilidadDeHoy || '—';
+          if (t.diaNumero === 7) return '⚪ Ninguna: Domingo — 0 cortes';
+          return `${t.probabilidad} (${t.conteo} cortes en ${t.semanasObservadas}s) — ${t.dia}`;
+        },
+
+        get todayPatternText() {
+          const t = this.todayData;
+          if (!t) return this.data?.monthly?.patronDeHoy || '—';
+          if (t.diaNumero === 7) return 'Domingo · Sin cortes programados';
+          return `${t.dia} · Patrón: ${t.horaCorteFmt} (${t.duracionProm})`;
+        },
+
+        formatDate(isoString) {
+          if (!isoString) return 'Hoy';
+          const date = new Date(isoString);
+          return date.toLocaleString('es-VE', {
+            dateStyle: 'medium',
+            timeStyle: 'short',
+            timeZone: 'America/Caracas'
+          });
         }
-    </script>
+      }
+    }
+  </script>
 </body>
 </html>
