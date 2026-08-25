@@ -22,25 +22,34 @@
             }
           },
           fontFamily: {
-            sans: ['Inter', 'system-ui', 'sans-serif'],
-            mono: ['JetBrains Mono', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace'],
+            sans: ['Geist', 'Inter', 'system-ui', '-apple-system', 'sans-serif'],
+            mono: ['Geist Mono', 'JetBrains Mono', 'ui-monospace', 'monospace'],
+            serifInst: ['Instrument Serif', 'Georgia', 'serif'],
           }
         }
       }
     }
   </script>
 
-  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <!-- Google Fonts: Geist, Geist Mono, Instrument Serif & Inter (Sanesca Design System v1.0.0) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
   <!-- Alpine.js Core -->
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.5/dist/cdn.min.js"></script>
 
   <style>
-    body { font-family: 'Inter', sans-serif; }
-    code, pre, .font-mono { font-family: 'JetBrains Mono', monospace; }
+    body { font-family: 'Geist', 'Inter', sans-serif; }
+    code, pre, .font-mono { font-family: 'Geist Mono', monospace; }
+    .font-serif-inst { font-family: 'Instrument Serif', Georgia, serif; }
+    
+    /* Placa de Alto Contraste para el Logotipo de Sanesca (Design System v1.0.0) */
+    .logo-contrast-plate {
+      background: #ffffff;
+      box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.15), 0 2px 8px rgba(0, 0, 0, 0.4);
+    }
+
     .custom-scrollbar::-webkit-scrollbar { height: 6px; width: 6px; }
     .custom-scrollbar::-webkit-scrollbar-track { background: #0f172a; }
     .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
@@ -49,16 +58,19 @@
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col antialiased">
 
   <!-- ========================================================================= -->
-  <!-- ZONA 0: HEADER Y NAVEGACIÓN UNIFICADA (IDÉNTICO A MEDIDAS-OPERATIVAS)    -->
+  <!-- ZONA 0: HEADER Y NAVEGACIÓN UNIFICADA (DESIGN SYSTEM SANESCA v1.0.0)      -->
   <!-- ========================================================================= -->
   <header class="bg-slate-900/95 backdrop-blur border-b border-slate-800 sticky top-0 z-40 shadow-lg">
     <div class="max-w-7xl mx-auto px-4 py-2.5 sm:px-6 flex items-center justify-between border-b border-slate-800/60">
       <div class="flex items-center gap-3">
-        <img src="assets/logo-sanesca.png" alt="Sanesca" class="h-8 w-auto object-contain" onerror="this.style.display='none'">
+        <!-- Placa de Alto Contraste del Logotipo -->
+        <div class="logo-contrast-plate px-2 py-1 rounded-lg flex items-center justify-center transition hover:scale-105">
+          <img src="assets/logo-sanesca.png" alt="Sanesca Exhibidores" class="h-6 sm:h-7 w-auto object-contain">
+        </div>
         <div>
           <h1 class="text-white font-extrabold text-base sm:text-lg tracking-tight flex items-center gap-2">
             <span>⚡ Monitoreo Operativo</span>
-            <span class="hidden sm:inline-block text-[11px] font-semibold bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded border border-amber-500/30">En Vivo</span>
+            <span class="hidden sm:inline-block text-[11px] font-mono font-semibold bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded border border-amber-500/30">EN VIVO</span>
           </h1>
           <p class="text-xs text-slate-400 hidden md:block">Centro de Control de Cortes de Luz y Resiliencia Energética</p>
         </div>
@@ -70,7 +82,7 @@
            class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 border border-emerald-500/30 transition shadow-sm"
            title="Ir al Portal de Medidas Operativas y Conciliación Bilateral">
           <span>🏭 Medidas Operativas</span>
-          <span class="text-xs">↗</span>
+          <span class="text-xs font-mono">↗</span>
         </a>
       </div>
     </div>
@@ -78,8 +90,10 @@
     <!-- Sub-barra de Navegación Rápida a Secciones -->
     <div class="max-w-7xl mx-auto px-4 py-1.5 overflow-x-auto custom-scrollbar flex items-center gap-1.5 text-xs whitespace-nowrap">
       <a href="#estado-vivo" class="px-2.5 py-1 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition font-medium">⚡ Estado en Vivo</a>
+      <a href="#cronograma-hoy" class="px-2.5 py-1 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition font-medium">⏱️ Cronograma Hoy</a>
       <a href="#semaforo-semanal" class="px-2.5 py-1 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition font-medium">📊 Semáforo Semanal</a>
       <a href="#kpis-mensuales" class="px-2.5 py-1 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition font-medium">🎛️ Control Mensual</a>
+      <a href="#arquitectura-pipeline" class="px-2.5 py-1 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition font-medium">📐 Pipeline & Telemetría</a>
       <a href="#progreso-anual" class="px-2.5 py-1 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition font-medium">📅 Progreso Anual</a>
     </div>
   </header>
@@ -93,30 +107,30 @@
         
         <!-- Contexto Izquierdo: Fecha, Título y Parámetros -->
         <div class="lg:col-span-7 space-y-3">
-          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-slate-800 border border-slate-700 text-slate-300">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-slate-800 border border-slate-700 text-slate-300 font-mono">
             <span class="w-2 h-2 rounded-full animate-ping"
                   :class="timerStatus.pulseColor"></span>
             <span x-text="currentTimeString || 'Cargando fecha y hora...'"></span>
-            <span class="text-[10px] text-slate-400 font-mono pl-1 border-l border-slate-700">🇻🇪 UTC-4</span>
+            <span class="text-[10px] text-slate-400 pl-1 border-l border-slate-700">🇻🇪 UTC-4</span>
           </div>
 
-          <h2 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+          <h2 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight font-serif-inst">
             Monitoreo Predictivo de Cortes Eléctricos
           </h2>
           <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
-            Plataforma operativa sincronizada con la base de datos de planta. Calcula la probabilidad estadística y la <strong class="text-emerald-400 font-semibold">ventana horaria crítica</strong> del día para activar oportunamente los protocolos de contingencia y proteger los equipos.
+            Plataforma operativa sincronizada con la base de datos de planta. Modela la probabilidad estadística y la <strong class="text-emerald-400 font-semibold">ventana horaria crítica</strong> del día para activar oportunamente los protocolos de contingencia y proteger los equipos.
           </p>
 
           <!-- Badges de parámetros de planta -->
-          <div class="flex flex-wrap items-center gap-2 pt-2 text-xs">
-            <span class="px-2.5 py-1 rounded-md bg-slate-800/80 border border-slate-700 text-slate-300 font-mono">
+          <div class="flex flex-wrap items-center gap-2 pt-2 text-xs font-mono">
+            <span class="px-2.5 py-1 rounded-md bg-slate-800/80 border border-slate-700 text-slate-300">
               ⚡ Generador Iveco Aifo (28 kW PRP / 92A)
             </span>
-            <span class="px-2.5 py-1 rounded-md bg-slate-800/80 border border-slate-700 text-slate-300 font-mono">
-              📊 18 Semanas (45 cortes auditados)
+            <span class="px-2.5 py-1 rounded-md bg-slate-800/80 border border-slate-700 text-slate-300">
+              📊 18 Semanas (45+ cortes auditados)
             </span>
-            <span class="px-2.5 py-1 rounded-md bg-slate-800/80 border border-slate-700 text-slate-300 font-mono">
-              ⏱️ Sincronización diaria automática
+            <span class="px-2.5 py-1 rounded-md bg-slate-800/80 border border-slate-700 text-slate-300">
+              ⏱️ Sincronización diaria 00:01 UTC-4
             </span>
           </div>
         </div>
@@ -136,13 +150,13 @@
             <div class="grid grid-cols-2 gap-4 text-center">
               <!-- Reloj Predictivo -->
               <div class="bg-slate-950/60 rounded-xl p-3 border border-slate-800 flex flex-col justify-center">
-                <span class="text-[11px] text-slate-400 block mb-1 uppercase font-semibold tracking-wider" :class="timerStatus.color" x-text="timerStatus.label"></span>
+                <span class="text-[11px] text-slate-400 block mb-1 uppercase font-semibold tracking-wider font-mono" :class="timerStatus.color" x-text="timerStatus.label"></span>
                 <span class="text-2xl sm:text-3xl font-black text-white font-mono" x-text="timerStatus.time"></span>
                 <span class="text-[10px] text-slate-500 block mt-1" x-text="todayData?.diaNumero === 7 ? 'Día libre de cortes' : 'Reloj en tiempo real'"></span>
               </div>
               <!-- Ventana Típica -->
               <div class="bg-slate-950/60 rounded-xl p-3 border border-slate-800 flex flex-col justify-center">
-                <span class="text-[11px] text-slate-400 block mb-1 uppercase font-semibold tracking-wider">Ventana de Riesgo</span>
+                <span class="text-[11px] text-slate-400 block mb-1 uppercase font-semibold tracking-wider font-mono">Ventana de Riesgo</span>
                 <span class="text-xs sm:text-sm font-bold text-amber-300 font-mono block mt-1" x-text="todayData?.ventanaRiesgo || '—'"></span>
                 <span class="text-[10px] text-slate-500 block mt-1" x-text="todayData?.duracionProm ? ('Duración media: ' + todayData.duracionProm) : 'Sin registros'"></span>
               </div>
@@ -172,26 +186,139 @@
         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
       </svg>
-      <p class="text-slate-400 text-sm font-medium">Sincronizando datos de Notion API...</p>
+      <p class="text-slate-400 text-sm font-medium font-mono">Sincronizando datos de Notion API...</p>
     </div>
 
     <!-- Error State -->
     <div x-show="error" style="display: none;" class="bg-rose-950/40 border border-rose-800/60 rounded-xl p-6 text-center">
       <div class="text-rose-400 text-3xl mb-2">⚠️</div>
       <h3 class="text-base font-bold text-rose-300 mb-1">Error de sincronización</h3>
-      <p class="text-rose-400 text-xs" x-text="error"></p>
+      <p class="text-rose-400 text-xs font-mono" x-text="error"></p>
       <button @click="init()" class="mt-4 px-4 py-2 bg-rose-900/60 hover:bg-rose-800 text-rose-200 border border-rose-700/60 rounded-lg text-xs font-semibold transition">Reintentar</button>
     </div>
 
     <div x-show="!loading && !error" style="display: none;" class="space-y-14">
 
       <!-- ===================================================================== -->
-      <!-- MÓDULO 1: SEMÁFORO DE RIESGO OPERATIVO SEMANAL (7 DÍAS)              -->
+      <!-- MÓDULO 1: CRONOGRAMA VECTORIAL DE LA JORNADA EN VIVO (DIAGRAM-DESIGN) -->
+      <!-- ===================================================================== -->
+      <section id="cronograma-hoy" class="scroll-mt-36 space-y-6">
+        <div class="border-l-4 border-emerald-500 pl-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <div class="flex items-center gap-2 flex-wrap">
+              <h3 class="text-xl sm:text-2xl font-extrabold text-white font-serif-inst">Cronograma Vectorial de la Jornada</h3>
+              <span class="text-xs font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded font-semibold">Live Timeline 06:00–18:00</span>
+            </div>
+            <p class="text-slate-400 text-sm mt-1">Mapeo dinámico de la Franja Dorada Segura frente a la Ventana Crítica de corte de hoy.</p>
+          </div>
+
+          <!-- Botón de Alternancia Móvil / Panorámica -->
+          <button @click="toggleTimelineView()"
+                  class="self-start sm:self-auto px-3 py-1.5 rounded-lg border text-xs font-mono font-semibold transition flex items-center gap-2 shadow-sm"
+                  :class="isMobileTimelineView ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' : 'bg-slate-900 text-slate-300 border-slate-700 hover:border-slate-500'">
+            <span x-text="isMobileTimelineView ? '📱 Vista Móvil (Activa)' : '🖥️ Vista Panorámica'"></span>
+            <span class="text-[10px] text-slate-400">↺</span>
+          </button>
+        </div>
+
+        <div class="bg-slate-900 rounded-2xl p-5 sm:p-6 border border-slate-800 shadow-xl space-y-4">
+          
+          <!-- Vista Panorámica SVG (Desktop / Tablets) -->
+          <div x-show="!isMobileTimelineView" class="overflow-x-auto custom-scrollbar">
+            <svg class="w-full min-w-[760px] h-[150px]" viewBox="0 0 960 150" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <!-- Fondo del Canvas de Línea de Tiempo -->
+              <rect x="20" y="20" width="920" height="110" rx="8" fill="#020617" stroke="#1e293b" stroke-width="1.5"/>
+
+              <!-- Marcas Horarias (06:00 a 18:00 = 12 horas / 76.6px por hora) -->
+              <!-- Base X: 40px, Fin X: 920px (Ancho útil: 880px) -->
+              <g stroke="#334155" stroke-width="1" stroke-dasharray="3 3">
+                <line x1="40" y1="20" x2="40" y2="130" />
+                <line x1="186.6" y1="20" x2="186.6" y2="130" />
+                <line x1="333.3" y1="20" x2="333.3" y2="130" />
+                <line x1="406.6" y1="20" x2="406.6" y2="130" stroke="#10b981" stroke-width="1.5" />
+                <line x1="480" y1="20" x2="480" y2="130" />
+                <line x1="626.6" y1="20" x2="626.6" y2="130" />
+                <line x1="773.3" y1="20" x2="773.3" y2="130" />
+                <line x1="920" y1="20" x2="920" y2="130" />
+              </g>
+
+              <!-- Franja Dorada Segura (06:00 a 11:00 AM = 5 horas = 366.6px) -->
+              <rect x="40" y="32" width="366.6" height="52" rx="6" fill="#10b981" fill-opacity="0.16" stroke="#10b981" stroke-width="1.5"/>
+              <text x="52" y="55" fill="#34d399" font-size="12" font-weight="700" font-family="'Geist', sans-serif">⚡ FRANJA DORADA (100% SEGURA)</text>
+              <text x="52" y="72" fill="#94a3b8" font-size="10" font-family="'Geist Mono', monospace">06:00 AM – 11:00 AM · Operación continua de Láser CNC y Plegadora</text>
+
+              <!-- Ventana de Riesgo de Hoy (Bloque Ámbar / Rosa) -->
+              <rect x="510" y="32" width="340" height="52" rx="6" fill="#f43f5e" fill-opacity="0.16" stroke="#f43f5e" stroke-width="1.5"/>
+              <text x="522" y="55" fill="#fda4af" font-size="12" font-weight="700" font-family="'Geist', sans-serif">⚠️ VENTANA CRÍTICA DE HOY</text>
+              <text x="522" y="72" fill="#94a3b8" font-size="10" font-family="'Geist Mono', monospace" x-text="`${todayData?.ventanaRiesgo || '12:00 PM – 05:00 PM'} · Respaldo con Generador Iveco Aifo`"></text>
+
+              <!-- Etiquetas Horarias Inferiores -->
+              <g font-family="'Geist Mono', monospace" font-size="10" fill="#64748b" text-anchor="middle">
+                <text x="40" y="112">06:00 AM</text>
+                <text x="186.6" y="112">08:00 AM</text>
+                <text x="333.3" y="112">10:00 AM</text>
+                <text x="406.6" y="112" fill="#34d399" font-weight="700">11:00 AM 🛡️</text>
+                <text x="480" y="112">12:00 PM</text>
+                <text x="626.6" y="112">02:00 PM</text>
+                <text x="773.3" y="112">04:00 PM</text>
+                <text x="920" y="112">06:00 PM</text>
+              </g>
+            </svg>
+          </div>
+
+          <!-- Vista Móvil Adaptada (Tarjetas Verticales Apiladas) -->
+          <div x-show="isMobileTimelineView" class="space-y-3">
+            <!-- Franja Dorada -->
+            <div class="bg-slate-950/90 rounded-xl p-3.5 border border-emerald-500/40 relative pl-11">
+              <div class="absolute left-3 top-3.5 w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/50 flex items-center justify-center text-xs font-mono font-bold">
+                1
+              </div>
+              <div class="flex items-center justify-between">
+                <h5 class="font-bold text-white text-xs sm:text-sm">Franja Dorada Segura</h5>
+                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 font-semibold">06:00 – 11:00 AM</span>
+              </div>
+              <p class="text-xs text-slate-300 mt-1">100% libre de cortes históricos. Ejecución exclusiva de Corte Láser CNC.</p>
+            </div>
+
+            <!-- Ventana Crítica de Hoy -->
+            <div class="bg-slate-950/90 rounded-xl p-3.5 border border-rose-500/40 relative pl-11">
+              <div class="absolute left-3 top-3.5 w-6 h-6 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/50 flex items-center justify-center text-xs font-mono font-bold">
+                2
+              </div>
+              <div class="flex items-center justify-between">
+                <h5 class="font-bold text-white text-xs sm:text-sm">Ventana de Riesgo Crítico</h5>
+                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-rose-500/10 text-rose-400 border border-rose-500/30 font-semibold" x-text="todayData?.ventanaRiesgo || '12:00 – 05:00 PM'"></span>
+              </div>
+              <p class="text-xs text-slate-300 mt-1">Alta probabilidad de corte. Activación del Generador Iveco (28 kW PRP / 92A).</p>
+            </div>
+
+            <!-- Post Retorno -->
+            <div class="bg-slate-950/90 rounded-xl p-3.5 border border-blue-500/30 relative pl-11">
+              <div class="absolute left-3 top-3.5 w-6 h-6 rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/50 flex items-center justify-center text-xs font-mono font-bold">
+                3
+              </div>
+              <div class="flex items-center justify-between">
+                <h5 class="font-bold text-white text-xs sm:text-sm">Retorno y Ensamble</h5>
+                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/30 font-semibold" x-text="`Post ${todayData?.horaRetornoFmt || '05:00 PM'}`"></span>
+              </div>
+              <p class="text-xs text-slate-300 mt-1">Normalización de red comercial y cierre de actividades del turno.</p>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between text-[11px] text-slate-400 font-mono pt-2 border-t border-slate-800">
+            <span>🛡️ Protocolo de Resiliencia Energética</span>
+            <span class="text-emerald-400 font-semibold" x-text="`Día de Referencia: ${todayData?.dia || 'Lunes'}`"></span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================================================================== -->
+      <!-- MÓDULO 2: SEMÁFORO DE RIESGO OPERATIVO SEMANAL (7 DÍAS)              -->
       <!-- ===================================================================== -->
       <section id="semaforo-semanal" class="scroll-mt-36 space-y-6">
         <div class="border-l-4 border-emerald-500 pl-4">
           <div class="flex items-center justify-between flex-wrap gap-2">
-            <h3 class="text-xl sm:text-2xl font-extrabold text-white">Semáforo de Riesgo Operativo Semanal</h3>
+            <h3 class="text-xl sm:text-2xl font-extrabold text-white font-serif-inst">Semáforo de Riesgo Operativo Semanal</h3>
             <span class="text-xs text-slate-400 font-mono">Lunes a Domingo · 18 Semanas Observadas</span>
           </div>
           <p class="text-slate-400 text-sm">Distribución jerárquica de la vulnerabilidad eléctrica para planificar turnos continuos y el uso de maquinaria pesada.</p>
@@ -204,7 +331,7 @@
                  :class="getCardRing(day.diaNumero)">
               
               <!-- Badge de HOY -->
-              <div x-show="isToday(day.diaNumero)" class="absolute -top-2.5 -right-2 bg-emerald-500 text-slate-950 text-[10px] font-black px-2 py-0.5 rounded-full shadow-lg border border-emerald-300 flex items-center gap-1">
+              <div x-show="isToday(day.diaNumero)" class="absolute -top-2.5 -right-2 bg-emerald-500 text-slate-950 text-[10px] font-black px-2 py-0.5 rounded-full shadow-lg border border-emerald-300 flex items-center gap-1 font-mono">
                 <span class="w-1.5 h-1.5 rounded-full bg-slate-950 animate-pulse"></span> HOY
               </div>
 
@@ -244,12 +371,12 @@
       </section>
 
       <!-- ===================================================================== -->
-      <!-- MÓDULO 2: CONTROL Y ESTADÍSTICAS MENSUALES EN VIVO                    -->
+      <!-- MÓDULO 3: CONTROL Y ESTADÍSTICAS MENSUALES EN VIVO                    -->
       <!-- ===================================================================== -->
       <section id="kpis-mensuales" class="scroll-mt-36 space-y-6">
         <div class="border-l-4 border-amber-500 pl-4">
           <div class="flex items-center justify-between flex-wrap gap-2">
-            <h3 class="text-xl sm:text-2xl font-extrabold text-white">Panel de Control y Métricas Mensuales</h3>
+            <h3 class="text-xl sm:text-2xl font-extrabold text-white font-serif-inst">Panel de Control y Métricas Mensuales</h3>
             <span class="text-xs text-slate-400 font-mono">Sincronizado vía Notion API</span>
           </div>
           <p class="text-slate-400 text-sm">Monitoreo de horas planta acumuladas, tasa de frecuencia y termómetro de estrés energético del mes.</p>
@@ -262,7 +389,7 @@
               <span class="text-2xl">⚡</span>
               <div>
                 <h4 class="font-bold text-white text-sm">Cortes del Mes</h4>
-                <span class="text-[11px] text-amber-400 font-semibold">Eventos registrados</span>
+                <span class="text-[11px] text-amber-400 font-semibold font-mono">Eventos registrados</span>
               </div>
             </div>
             <div class="text-3xl font-black text-white font-mono" x-text="data?.monthly?.cortesDelMes ?? '12'"></div>
@@ -275,7 +402,7 @@
               <span class="text-2xl">🕐</span>
               <div>
                 <h4 class="font-bold text-white text-sm">Horas Planta</h4>
-                <span class="text-[11px] text-emerald-400 font-semibold">Generador activo</span>
+                <span class="text-[11px] text-emerald-400 font-semibold font-mono">Generador activo</span>
               </div>
             </div>
             <div class="text-3xl font-black text-white font-mono" x-text="data?.monthly?.totalHorasPlanta || '0 hrs'"></div>
@@ -288,7 +415,7 @@
               <span class="text-2xl">📊</span>
               <div>
                 <h4 class="font-bold text-white text-sm">Frecuencia Semanal</h4>
-                <span class="text-[11px] text-blue-400 font-semibold">Tasa de fallas</span>
+                <span class="text-[11px] text-sky-400 font-semibold font-mono">Tasa de fallas</span>
               </div>
             </div>
             <div class="text-xl font-extrabold text-white font-mono pt-1" x-text="data?.monthly?.frecuenciaSemanal || '—'"></div>
@@ -301,7 +428,7 @@
               <span class="text-2xl">🌡️</span>
               <div>
                 <h4 class="font-bold text-white text-sm">Estrés Energético</h4>
-                <span class="text-[11px] text-amber-400 font-semibold">Termómetro de planta</span>
+                <span class="text-[11px] text-purple-400 font-semibold font-mono">Termómetro de planta</span>
               </div>
             </div>
             <div class="pt-1">
@@ -315,17 +442,137 @@
       </section>
 
       <!-- ===================================================================== -->
-      <!-- MÓDULO 3: PROGRESO Y HORIZONTE ANUAL                                 -->
+      <!-- MÓDULO 4: PIPELINE DE TELEMETRÍA Y ARQUITECTURA DE DATOS (DIAGRAM)    -->
+      <!-- ===================================================================== -->
+      <section id="arquitectura-pipeline" class="scroll-mt-36 space-y-6">
+        <div class="border-l-4 border-purple-500 pl-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <div class="flex items-center gap-2 flex-wrap">
+              <h3 class="text-xl sm:text-2xl font-extrabold text-white font-serif-inst">Pipeline de Telemetría y Sincronización Automática</h3>
+              <span class="text-xs font-mono bg-purple-500/10 text-purple-300 border border-purple-500/30 px-2 py-0.5 rounded font-semibold">Notion API → GitHub Actions → CDN</span>
+            </div>
+            <p class="text-slate-400 text-sm mt-1">Flujo de datos automatizado que transforma eventos transaccionales en un JSON estático para máxima velocidad.</p>
+          </div>
+
+          <!-- Selector de Modo de Diagrama -->
+          <button @click="togglePipelineView()"
+                  class="self-start sm:self-auto px-3 py-1.5 rounded-lg border text-xs font-mono font-semibold transition flex items-center gap-2 shadow-sm"
+                  :class="isMobilePipelineView ? 'bg-purple-500/20 text-purple-300 border-purple-500/40' : 'bg-slate-900 text-slate-300 border-slate-700 hover:border-slate-500'">
+            <span x-text="isMobilePipelineView ? '📱 Vista Móvil (Activa)' : '🖥️ Vista Panorámica'"></span>
+            <span class="text-[10px] text-slate-400">↺</span>
+          </button>
+        </div>
+
+        <div class="bg-slate-900 rounded-2xl p-5 sm:p-6 border border-slate-800 shadow-xl space-y-4">
+          
+          <!-- Vista Panorámica SVG (Desktop / Tablets) -->
+          <div x-show="!isMobilePipelineView" class="overflow-x-auto custom-scrollbar">
+            <svg class="w-full min-w-[760px] h-[190px]" viewBox="0 0 960 190" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <!-- Fondo del Diagrama -->
+              <rect x="10" y="10" width="940" height="170" rx="8" fill="#020617" stroke="#1e293b" stroke-width="1.5"/>
+
+              <!-- Conectores Ortogonales con Arcos r=8px -->
+              <path d="M 280 95 L 340 95" stroke="#38bdf8" stroke-width="2" stroke-dasharray="4 4"/>
+              <polygon points="345,95 337,91 337,99" fill="#38bdf8"/>
+
+              <path d="M 600 95 L 660 95" stroke="#10b981" stroke-width="2" stroke-dasharray="4 4"/>
+              <polygon points="665,95 657,91 657,99" fill="#10b981"/>
+
+              <!-- ETAPA 1: NOTION WORKSPACE -->
+              <g transform="translate(30, 35)">
+                <rect width="250" height="120" rx="8" fill="#0f172a" stroke="#a855f7" stroke-width="1.5"/>
+                <rect x="12" y="12" width="70" height="18" rx="4" fill="#a855f7" fill-opacity="0.2"/>
+                <text x="18" y="25" fill="#d8b4fe" font-size="10" font-family="'Geist Mono', monospace" font-weight="700">1. ORIGEN</text>
+                <text x="14" y="52" fill="#ffffff" font-size="13" font-weight="700" font-family="'Geist', sans-serif">Bases de Datos Notion</text>
+                <text x="14" y="72" fill="#94a3b8" font-size="11" font-family="'Geist Mono', monospace">• DB5: Monitoreo en Vivo</text>
+                <text x="14" y="90" fill="#94a3b8" font-size="11" font-family="'Geist Mono', monospace">• DB2: Resumen Semanal</text>
+                <text x="14" y="108" fill="#c084fc" font-size="10" font-family="'Geist Mono', monospace">Token de Integración Read-Only</text>
+              </g>
+
+              <!-- ETAPA 2: GITHUB ACTIONS RUNNER -->
+              <g transform="translate(350, 35)">
+                <rect width="250" height="120" rx="8" fill="#0f172a" stroke="#38bdf8" stroke-width="1.5"/>
+                <rect x="12" y="12" width="75" height="18" rx="4" fill="#38bdf8" fill-opacity="0.2"/>
+                <text x="18" y="25" fill="#7dd3fc" font-size="10" font-family="'Geist Mono', monospace" font-weight="700">2. INGESTA</text>
+                <text x="14" y="52" fill="#ffffff" font-size="13" font-weight="700" font-family="'Geist', sans-serif">GitHub Actions CI/CD</text>
+                <text x="14" y="72" fill="#94a3b8" font-size="11" font-family="'Geist Mono', monospace">• Cron diario: 00:01 UTC-4</text>
+                <text x="14" y="90" fill="#94a3b8" font-size="11" font-family="'Geist Mono', monospace">• scripts/fetch-notion.js</text>
+                <text x="14" y="108" fill="#38bdf8" font-size="10" font-family="'Geist Mono', monospace">Compilación: data/dashboard.json</text>
+              </g>
+
+              <!-- ETAPA 3: GITHUB PAGES CDN (FOCO ÚNICO) -->
+              <g transform="translate(670, 35)">
+                <rect width="250" height="120" rx="8" fill="#064e3b" fill-opacity="0.3" stroke="#10b981" stroke-width="2"/>
+                <rect x="12" y="12" width="80" height="18" rx="4" fill="#10b981" fill-opacity="0.3"/>
+                <text x="18" y="25" fill="#6ee7b7" font-size="10" font-family="'Geist Mono', monospace" font-weight="700">3. DESPLIEGUE</text>
+                <text x="14" y="52" fill="#ffffff" font-size="13" font-weight="700" font-family="'Geist', sans-serif">GitHub Pages CDN</text>
+                <text x="14" y="72" fill="#a7f3d0" font-size="11" font-family="'Geist Mono', monospace">• SSG Estático Puro (0ms cold)</text>
+                <text x="14" y="90" fill="#a7f3d0" font-size="11" font-family="'Geist Mono', monospace">• Alpine.js Client Hydration</text>
+                <text x="14" y="108" fill="#34d399" font-size="10" font-family="'Geist Mono', monospace">⚡ Cero latencia en planta</text>
+              </g>
+            </svg>
+          </div>
+
+          <!-- Vista Móvil Adaptada (Tarjetas Apiladas) -->
+          <div x-show="isMobilePipelineView" class="space-y-3">
+            <!-- Etapa 1 -->
+            <div class="bg-slate-950/90 rounded-xl p-4 border border-purple-500/40 relative pl-11">
+              <div class="absolute left-3 top-4 w-6 h-6 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/50 flex items-center justify-center text-xs font-mono font-bold">
+                1
+              </div>
+              <div class="flex items-center justify-between">
+                <h5 class="font-bold text-white text-xs sm:text-sm">Bases de Datos de Notion</h5>
+                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-purple-500/10 text-purple-300 border border-purple-500/30">API Read-Only</span>
+              </div>
+              <p class="text-xs text-slate-300 mt-1 font-mono">DB5 (Monitoreo en Vivo) y DB2 (Resumen Semanal por Día).</p>
+            </div>
+
+            <!-- Flecha -->
+            <div class="flex justify-center text-slate-600 font-mono text-xs">↓</div>
+
+            <!-- Etapa 2 -->
+            <div class="bg-slate-950/90 rounded-xl p-4 border border-sky-500/40 relative pl-11">
+              <div class="absolute left-3 top-4 w-6 h-6 rounded-full bg-sky-500/20 text-sky-300 border border-sky-500/50 flex items-center justify-center text-xs font-mono font-bold">
+                2
+              </div>
+              <div class="flex items-center justify-between">
+                <h5 class="font-bold text-white text-xs sm:text-sm">GitHub Actions Runner</h5>
+                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-sky-500/10 text-sky-300 border border-sky-500/30">Cron 00:01 UTC-4</span>
+              </div>
+              <p class="text-xs text-slate-300 mt-1 font-mono">Ejecuta scripts/fetch-notion.js y compila data/dashboard.json.</p>
+            </div>
+
+            <!-- Flecha -->
+            <div class="flex justify-center text-slate-600 font-mono text-xs">↓</div>
+
+            <!-- Etapa 3 -->
+            <div class="bg-emerald-950/30 rounded-xl p-4 border border-emerald-500/50 relative pl-11">
+              <div class="absolute left-3 top-4 w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/50 flex items-center justify-center text-xs font-mono font-bold">
+                3
+              </div>
+              <div class="flex items-center justify-between">
+                <h5 class="font-bold text-white text-xs sm:text-sm">GitHub Pages (CDN)</h5>
+                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">⚡ 0ms Latencia</span>
+              </div>
+              <p class="text-xs text-slate-300 mt-1 font-mono">Portal estático de ultra-alta velocidad consumible desde planta.</p>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ===================================================================== -->
+      <!-- MÓDULO 5: PROGRESO Y HORIZONTE ANUAL                                 -->
       <!-- ===================================================================== -->
       <section id="progreso-anual" class="scroll-mt-36 space-y-6">
-        <div class="border-l-4 border-blue-500 pl-4">
-          <h3 class="text-xl sm:text-2xl font-extrabold text-white">Horizonte Operativo Anual</h3>
+        <div class="border-l-4 border-sky-500 pl-4">
+          <h3 class="text-xl sm:text-2xl font-extrabold text-white font-serif-inst">Horizonte Operativo Anual</h3>
           <p class="text-slate-400 text-sm">Consumo de semanas calendario del año operativo y métricas de auditoría.</p>
         </div>
 
         <div class="bg-slate-900 rounded-2xl p-6 border border-slate-800 shadow-xl space-y-4">
           <div class="flex items-center justify-between flex-wrap gap-2">
-            <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Progreso Anual Consolidado</span>
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-400 font-mono">Progreso Anual Consolidado</span>
             <span class="text-xs font-mono text-emerald-400">Semana Epidemiológica / Operativa</span>
           </div>
 
@@ -343,11 +590,11 @@
   </main>
 
   <!-- ========================================================================= -->
-  <!-- ZONA 4: FOOTER UNIFICADO                                                 -->
+  <!-- ZONA 5: FOOTER UNIFICADO (DESIGN SYSTEM SANESCA v1.0.0)                  -->
   <!-- ========================================================================= -->
   <footer class="mt-auto py-8 text-center text-xs text-slate-500 border-t border-slate-900 bg-slate-950">
-    <div class="max-w-7xl mx-auto px-4 space-y-2">
-      <p class="font-semibold text-slate-300">Sanesca Exhibidores · Sistema Integrado de Mantenimiento y Resiliencia Energética</p>
+    <div class="max-w-7xl mx-auto px-4 space-y-2 font-mono">
+      <p class="font-semibold text-slate-300 font-sans">Sanesca Exhibidores · Sistema Integrado de Mantenimiento y Resiliencia Energética</p>
       <p class="text-slate-500">
         <a href="https://cazx008.github.io/sanesca-dashboard/" class="text-emerald-400 hover:underline">Dashboard en Vivo</a>
         <span class="mx-2">·</span>
@@ -369,9 +616,19 @@
         currentTimeString: '',
         timerStatus: { label: '', color: '', time: '', bg: '', pulseColor: 'bg-emerald-400' },
         currentJsDay: 1, // Default Lunes
+        isMobileTimelineView: window.innerWidth < 768,
+        isMobilePipelineView: window.innerWidth < 768,
 
         init() {
           this.updateTime();
+          
+          window.addEventListener('resize', () => {
+            if (window.innerWidth < 768) {
+              this.isMobileTimelineView = true;
+              this.isMobilePipelineView = true;
+            }
+          });
+
           setInterval(() => {
             this.updateTime();
             this.updateTimer();
@@ -393,6 +650,14 @@
               this.error = 'No se pudieron cargar los datos. ' + err.message;
               this.loading = false;
             });
+        },
+
+        toggleTimelineView() {
+          this.isMobileTimelineView = !this.isMobileTimelineView;
+        },
+
+        togglePipelineView() {
+          this.isMobilePipelineView = !this.isMobilePipelineView;
         },
 
         getVenezuelaTime() {
@@ -489,10 +754,10 @@
             const elapsed = Math.floor(Math.abs(diff + pattern.duracionMin) / 60);
             this.timerStatus = {
               label: 'Ventana superada',
-              color: 'text-blue-400',
+              color: 'text-sky-400',
               time: `Superada (+${elapsed}h)`,
-              bg: 'bg-blue-950/30 border-blue-800/50',
-              pulseColor: 'bg-blue-400'
+              bg: 'bg-sky-950/30 border-sky-800/50',
+              pulseColor: 'bg-sky-400'
             };
           }
         },
@@ -503,7 +768,7 @@
           if (text.includes('🟠') || text.includes('Alta') || text.includes('Alerta')) return 'bg-amber-500/20 text-amber-300 border-amber-500/30';
           if (text.includes('🟡') || text.includes('Medio') || text.includes('Moderado')) return 'bg-yellow-500/20 text-yellow-300 border-yellow-500/30';
           if (text.includes('🟢') || text.includes('Baja') || text.includes('Estable')) return 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30';
-          if (text.includes('🔵')) return 'bg-blue-500/20 text-blue-300 border-blue-500/30';
+          if (text.includes('🔵')) return 'bg-sky-500/20 text-sky-300 border-sky-500/30';
           if (text.includes('⚪') || text.includes('Ninguna')) return 'bg-slate-800 text-slate-400 border-slate-700';
           return 'bg-slate-800 text-slate-300 border-slate-700';
         },
