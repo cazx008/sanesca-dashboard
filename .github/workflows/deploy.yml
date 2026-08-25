@@ -1,6 +1,10 @@
 name: Deploy Sanesca Dashboard
 
 on:
+  push:
+    branches:
+      - master
+      - main
   schedule:
     # Ejecutar diariamente a las 00:01 UTC-4 (04:01 UTC)
     - cron: '1 4 * * *'

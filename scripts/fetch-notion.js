@@ -21,12 +21,12 @@ const DB2_ID = process.env.NOTION_DB2_ID || '3aa86805-4e27-8133-8d94-de72d7fc0d2
 const OUTPUT_DIR = path.join(__dirname, '..', 'data');
 const OUTPUT_FILE = path.join(OUTPUT_DIR, 'dashboard.json');
 
-if (!NOTION_TOKEN) {
-  console.error('❌ ERROR: Variable NOTION_TOKEN o SANESCATOKEN no definida.');
-  process.exit(1);
+let notion = null;
+if (NOTION_TOKEN) {
+  notion = new Client({ auth: NOTION_TOKEN });
+} else {
+  console.warn('⚠️ AVISO: Variable NOTION_TOKEN o SANESCATOKEN no definida. Se utilizarán datos base.');
 }
-
-const notion = new Client({ auth: NOTION_TOKEN });
 
 // Línea base estadística histórica de Sanesca (18 semanas observadas / 45 cortes) - Horas de Venezuela (UTC-4)
 const BASELINE_WEEKLY = {
@@ -176,6 +176,7 @@ async function queryDatabase(databaseId, sorts = []) {
 }
 
 async function fetchDB5() {
+  if (!notion) return null;
   console.log('📡 Consultando DB5: Dashboard de Actualidad y Monitoreo en Vivo...');
   try {
     const pages = await queryDatabase(DB5_ID);
@@ -204,6 +205,9 @@ async function fetchDB5() {
 }
 
 async function fetchDB2() {
+  if (!notion) {
+    return Object.values(BASELINE_WEEKLY);
+  }
   console.log('📡 Consultando DB2: Resumen Semanal de Cortes...');
   try {
     const pages = await queryDatabase(DB2_ID);
