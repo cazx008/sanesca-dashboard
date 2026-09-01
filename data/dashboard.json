@@ -1,107 +1,105 @@
 {
-  "buildTimestamp": "2026-08-25T19:17:19.809Z",
+  "buildTimestamp": "2026-09-01T19:16:16.872Z",
   "monthly": {
     "panel": "⚡ Monitoreo Operativo en Tiempo Real",
-    "cortesDelMes": 12,
-    "minutosTotalesMes": 510,
-    "totalHorasPlanta": "8.5 hrs (8h 30m)",
-    "frecuenciaSemanal": "3.4 cortes/sem (en curso)",
-    "estresEnergetico": "🟡 En rango histórico normal (±15%)",
-    "progresoAnual": "████████░░░░ 67% · Semana #35 (17 sem. restantes)"
+    "cortesDelMes": 14,
+    "minutosTotalesMes": 3949,
+    "totalHorasPlanta": "65.8 hrs (65h 49m)",
+    "frecuenciaSemanal": "98 cortes/sem (en curso)",
+    "estresEnergetico": "🔺 +2622% vs media histórica (Mes Crítico / Acelerado)",
+    "probabilidadDeHoy": "🟠 Riesgo Alto: 55% (11 cortes en 20 sem) — Martes",
+    "progresoAnual": "████████░░░░ 69% · Semana #36 (16 sem. restantes)",
+    "patronDeHoy": "Martes · Patrón: 4:57 PM (4h 06m)",
+    "medidorTiempo": "🔴 🚨 Ventana de Corte Activa (Duración esperada: 4h 6m)",
+    "estadoOperativo": null
   },
   "weekly": [
     {
       "dia": "Lunes",
       "diaNumero": 1,
-      "jsDay": 1,
       "horaCorteFmt": "12:28 PM",
       "horaRetornoFmt": "5:05 PM",
       "ventanaRiesgo": "12:28 PM – 5:05 PM",
-      "duracionProm": "4h 37m",
-      "probabilidad": "🔴 Muy Alta (72%)",
-      "pctTotal": "20.0%",
+      "duracionProm": "4h 36m",
+      "probabilidad": "🟠 Alta (65%)",
+      "pctTotal": "20%",
       "conteo": 13,
-      "semanasObservadas": 18,
-      "horaInicioMin": 748,
-      "horaFinMin": 1025,
-      "duracionMin": 277
+      "semanasObservadas": 20,
+      "horaInicioMin": 748.4615384615385,
+      "horaFinMin": 1024.923076923077,
+      "duracionMin": 276
     },
     {
       "dia": "Martes",
       "diaNumero": 2,
-      "jsDay": 2,
       "horaCorteFmt": "12:57 PM",
-      "horaRetornoFmt": "5:02 PM",
-      "ventanaRiesgo": "12:57 PM – 5:02 PM",
-      "duracionProm": "4h 05m",
-      "probabilidad": "🟠 Alta (61%)",
+      "horaRetornoFmt": "2:51 PM",
+      "ventanaRiesgo": "12:57 PM – 2:51 PM",
+      "duracionProm": "4h 06m",
+      "probabilidad": "🟠 Alta (55%)",
       "pctTotal": "16.9%",
       "conteo": 11,
-      "semanasObservadas": 18,
-      "horaInicioMin": 777,
-      "horaFinMin": 1022,
-      "duracionMin": 245
+      "semanasObservadas": 20,
+      "horaInicioMin": 776.8181818181819,
+      "horaFinMin": 891.4545454545455,
+      "duracionMin": 246
     },
     {
       "dia": "Miércoles",
       "diaNumero": 3,
-      "jsDay": 3,
       "horaCorteFmt": "11:49 AM",
-      "horaRetornoFmt": "4:11 PM",
-      "ventanaRiesgo": "11:49 AM – 4:11 PM",
+      "horaRetornoFmt": "2:41 PM",
+      "ventanaRiesgo": "11:49 AM – 2:41 PM",
       "duracionProm": "4h 22m",
-      "probabilidad": "🔴 Muy Alta (89%)",
+      "probabilidad": "🔴 Muy Alta (80%)",
       "pctTotal": "24.6%",
       "conteo": 16,
-      "semanasObservadas": 18,
-      "horaInicioMin": 709,
-      "horaFinMin": 971,
+      "semanasObservadas": 20,
+      "horaInicioMin": 709.25,
+      "horaFinMin": 880.75,
       "duracionMin": 262
     },
     {
       "dia": "Jueves",
       "diaNumero": 4,
-      "jsDay": 4,
       "horaCorteFmt": "12:27 PM",
-      "horaRetornoFmt": "4:32 PM",
-      "ventanaRiesgo": "12:27 PM – 4:32 PM",
-      "duracionProm": "4h 05m",
-      "probabilidad": "🔴 Muy Alta (72%)",
-      "pctTotal": "20.0%",
+      "horaRetornoFmt": "12:50 PM",
+      "ventanaRiesgo": "12:27 PM – 12:50 PM",
+      "duracionProm": "4h 04m",
+      "probabilidad": "🟠 Alta (65%)",
+      "pctTotal": "20%",
       "conteo": 13,
-      "semanasObservadas": 18,
-      "horaInicioMin": 747,
-      "horaFinMin": 992,
-      "duracionMin": 245
+      "semanasObservadas": 20,
+      "horaInicioMin": 747.0769230769231,
+      "horaFinMin": 770,
+      "duracionMin": 244
     },
     {
       "dia": "Viernes",
       "diaNumero": 5,
-      "jsDay": 5,
       "horaCorteFmt": "10:57 AM",
       "horaRetornoFmt": "3:57 PM",
       "ventanaRiesgo": "10:57 AM – 3:57 PM",
       "duracionProm": "5h 00m",
-      "probabilidad": "🟠 Alta (50%)",
+      "probabilidad": "🔵 Media (45%)",
       "pctTotal": "13.8%",
       "conteo": 9,
-      "semanasObservadas": 18,
-      "horaInicioMin": 657,
-      "horaFinMin": 957,
+      "semanasObservadas": 20,
+      "horaInicioMin": 657.3333333333334,
+      "horaFinMin": 957.3333333333333,
       "duracionMin": 300
     },
     {
       "dia": "Sábado",
       "diaNumero": 6,
-      "jsDay": 6,
       "horaCorteFmt": "11:00 AM",
       "horaRetornoFmt": "4:20 PM",
       "ventanaRiesgo": "11:00 AM – 4:20 PM",
       "duracionProm": "5h 20m",
-      "probabilidad": "🟢 Baja (17%)",
+      "probabilidad": "🟢 Baja (15%)",
       "pctTotal": "4.6%",
       "conteo": 3,
-      "semanasObservadas": 18,
+      "semanasObservadas": 20,
       "horaInicioMin": 660,
       "horaFinMin": 980,
       "duracionMin": 320
@@ -109,7 +107,6 @@
     {
       "dia": "Domingo",
       "diaNumero": 7,
-      "jsDay": 0,
       "horaCorteFmt": "—",
       "horaRetornoFmt": "—",
       "ventanaRiesgo": "—",
@@ -117,7 +114,7 @@
       "probabilidad": "⚪ Ninguna",
       "pctTotal": "0%",
       "conteo": 0,
-      "semanasObservadas": 18,
+      "semanasObservadas": 20,
       "horaInicioMin": 0,
       "horaFinMin": 0,
       "duracionMin": 0
@@ -137,37 +134,37 @@
       "dia": "Lunes",
       "horaInicioMin": 748,
       "horaFinMin": 1025,
-      "duracionMin": 277,
+      "duracionMin": 276,
       "horaCorteFmt": "12:28 PM",
-      "duracionProm": "4h 37m",
-      "probabilidad": "🔴 Muy Alta (72%)"
+      "duracionProm": "4h 36m",
+      "probabilidad": "🟠 Alta (65%)"
     },
     "2": {
       "dia": "Martes",
       "horaInicioMin": 777,
-      "horaFinMin": 1022,
-      "duracionMin": 245,
+      "horaFinMin": 891,
+      "duracionMin": 246,
       "horaCorteFmt": "12:57 PM",
-      "duracionProm": "4h 05m",
-      "probabilidad": "🟠 Alta (61%)"
+      "duracionProm": "4h 06m",
+      "probabilidad": "🟠 Alta (55%)"
     },
     "3": {
       "dia": "Miércoles",
       "horaInicioMin": 709,
-      "horaFinMin": 971,
+      "horaFinMin": 881,
       "duracionMin": 262,
       "horaCorteFmt": "11:49 AM",
       "duracionProm": "4h 22m",
-      "probabilidad": "🔴 Muy Alta (89%)"
+      "probabilidad": "🔴 Muy Alta (80%)"
     },
     "4": {
       "dia": "Jueves",
       "horaInicioMin": 747,
-      "horaFinMin": 992,
-      "duracionMin": 245,
+      "horaFinMin": 770,
+      "duracionMin": 244,
       "horaCorteFmt": "12:27 PM",
-      "duracionProm": "4h 05m",
-      "probabilidad": "🔴 Muy Alta (72%)"
+      "duracionProm": "4h 04m",
+      "probabilidad": "🟠 Alta (65%)"
     },
     "5": {
       "dia": "Viernes",
@@ -176,7 +173,7 @@
       "duracionMin": 300,
       "horaCorteFmt": "10:57 AM",
       "duracionProm": "5h 00m",
-      "probabilidad": "🟠 Alta (50%)"
+      "probabilidad": "🔵 Media (45%)"
     },
     "6": {
       "dia": "Sábado",
@@ -185,7 +182,7 @@
       "duracionMin": 320,
       "horaCorteFmt": "11:00 AM",
       "duracionProm": "5h 20m",
-      "probabilidad": "🟢 Baja (17%)"
+      "probabilidad": "🟢 Baja (15%)"
     }
   }
 }

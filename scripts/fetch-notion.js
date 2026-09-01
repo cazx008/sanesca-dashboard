@@ -28,55 +28,55 @@ if (NOTION_TOKEN) {
   console.warn('⚠️ AVISO: Variable NOTION_TOKEN o SANESCATOKEN no definida. Se utilizarán datos base.');
 }
 
-// Línea base estadística histórica de Sanesca (18 semanas observadas / 45 cortes) - Horas de Venezuela (UTC-4)
+// Línea base estadística histórica de Sanesca (20 semanas observadas / 65 cortes) - Horas de Venezuela (UTC-4)
 const BASELINE_WEEKLY = {
   "Lunes": {
     dia: "Lunes", diaNumero: 1, jsDay: 1,
     horaCorteFmt: "12:28 PM", horaRetornoFmt: "5:05 PM", ventanaRiesgo: "12:28 PM – 5:05 PM",
-    duracionProm: "4h 37m", probabilidad: "🔴 Muy Alta (72%)", pctTotal: "20.0%",
-    conteo: 13, semanasObservadas: 18,
-    horaInicioMin: 748, horaFinMin: 1025, duracionMin: 277
+    duracionProm: "4h 36m", probabilidad: "🟠 Alta (65%)", pctTotal: "20.0%",
+    conteo: 13, semanasObservadas: 20,
+    horaInicioMin: 748, horaFinMin: 1025, duracionMin: 276
   },
   "Martes": {
     dia: "Martes", diaNumero: 2, jsDay: 2,
     horaCorteFmt: "12:57 PM", horaRetornoFmt: "5:02 PM", ventanaRiesgo: "12:57 PM – 5:02 PM",
-    duracionProm: "4h 05m", probabilidad: "🟠 Alta (61%)", pctTotal: "16.9%",
-    conteo: 11, semanasObservadas: 18,
-    horaInicioMin: 777, horaFinMin: 1022, duracionMin: 245
+    duracionProm: "4h 06m", probabilidad: "🟠 Alta (55%)", pctTotal: "16.9%",
+    conteo: 11, semanasObservadas: 20,
+    horaInicioMin: 777, horaFinMin: 1022, duracionMin: 246
   },
   "Miércoles": {
     dia: "Miércoles", diaNumero: 3, jsDay: 3,
     horaCorteFmt: "11:49 AM", horaRetornoFmt: "4:11 PM", ventanaRiesgo: "11:49 AM – 4:11 PM",
-    duracionProm: "4h 22m", probabilidad: "🔴 Muy Alta (89%)", pctTotal: "24.6%",
-    conteo: 16, semanasObservadas: 18,
+    duracionProm: "4h 22m", probabilidad: "🔴 Muy Alta (80%)", pctTotal: "24.6%",
+    conteo: 16, semanasObservadas: 20,
     horaInicioMin: 709, horaFinMin: 971, duracionMin: 262
   },
   "Jueves": {
     dia: "Jueves", diaNumero: 4, jsDay: 4,
     horaCorteFmt: "12:27 PM", horaRetornoFmt: "4:32 PM", ventanaRiesgo: "12:27 PM – 4:32 PM",
-    duracionProm: "4h 05m", probabilidad: "🔴 Muy Alta (72%)", pctTotal: "20.0%",
-    conteo: 13, semanasObservadas: 18,
-    horaInicioMin: 747, horaFinMin: 992, duracionMin: 245
+    duracionProm: "4h 04m", probabilidad: "🟠 Alta (65%)", pctTotal: "20.0%",
+    conteo: 13, semanasObservadas: 20,
+    horaInicioMin: 747, horaFinMin: 992, duracionMin: 244
   },
   "Viernes": {
     dia: "Viernes", diaNumero: 5, jsDay: 5,
     horaCorteFmt: "10:57 AM", horaRetornoFmt: "3:57 PM", ventanaRiesgo: "10:57 AM – 3:57 PM",
-    duracionProm: "5h 00m", probabilidad: "🟠 Alta (50%)", pctTotal: "13.8%",
-    conteo: 9, semanasObservadas: 18,
+    duracionProm: "5h 00m", probabilidad: "🔵 Media (45%)", pctTotal: "13.8%",
+    conteo: 9, semanasObservadas: 20,
     horaInicioMin: 657, horaFinMin: 957, duracionMin: 300
   },
   "Sábado": {
     dia: "Sábado", diaNumero: 6, jsDay: 6,
     horaCorteFmt: "11:00 AM", horaRetornoFmt: "4:20 PM", ventanaRiesgo: "11:00 AM – 4:20 PM",
-    duracionProm: "5h 20m", probabilidad: "🟢 Baja (17%)", pctTotal: "4.6%",
-    conteo: 3, semanasObservadas: 18,
+    duracionProm: "5h 20m", probabilidad: "🟢 Baja (15%)", pctTotal: "4.6%",
+    conteo: 3, semanasObservadas: 20,
     horaInicioMin: 660, horaFinMin: 980, duracionMin: 320
   },
   "Domingo": {
     dia: "Domingo", diaNumero: 7, jsDay: 0,
     horaCorteFmt: "—", horaRetornoFmt: "—", ventanaRiesgo: "—",
     duracionProm: "—", probabilidad: "⚪ Ninguna", pctTotal: "0%",
-    conteo: 0, semanasObservadas: 18,
+    conteo: 0, semanasObservadas: 20,
     horaInicioMin: 0, horaFinMin: 0, duracionMin: 0
   }
 };
@@ -138,7 +138,6 @@ function extractRollupValue(rollup) {
 // Convert UTC minutes to Venezuela minutes (UTC-4 -> -240 mins)
 function convertUtcMinutesToVzla(minutes) {
   if (minutes === null || minutes === undefined || minutes === 0) return 0;
-  // If the value is > 600 and appears to be UTC from Notion server
   let vzlaMins = minutes - 240;
   if (vzlaMins < 0) vzlaMins += 1440;
   return vzlaMins;
@@ -146,8 +145,9 @@ function convertUtcMinutesToVzla(minutes) {
 
 function formatMinutesTo12h(minutes) {
   if (!minutes || minutes === 0) return '—';
-  const hours24 = Math.floor(minutes / 60);
-  const mins = minutes % 60;
+  const totalMins = Math.round(minutes);
+  const hours24 = Math.floor(totalMins / 60);
+  const mins = totalMins % 60;
   const h12 = hours24 === 0 ? 12 : hours24 > 12 ? hours24 - 12 : hours24;
   const ampm = hours24 < 12 ? 'AM' : 'PM';
   const minsStr = mins < 10 ? '0' + mins : mins;
@@ -221,33 +221,29 @@ async function fetchDB2() {
 
         const baseline = BASELINE_WEEKLY[dia] || {};
 
-        let horaInicioMin = extractProperty(props['Prom. Hora Inicio (auto)']);
-        let horaFinMin = extractProperty(props['Prom. Hora Fin (auto)']);
-        let duracionMin = extractProperty(props['Prom. Duración (auto)']);
-        let horaCorteFmt = extractProperty(props['Hora Prom. Corte']);
-        let horaRetornoFmt = extractProperty(props['Hora Prom. Retorno']);
-        let ventanaRiesgo = extractProperty(props['Ventana de Riesgo']);
-        let duracionProm = extractProperty(props['Duración Prom.']);
-        let probabilidad = extractProperty(props['Probabilidad']);
-        let pctTotal = extractProperty(props['% del Total']);
+        let horaInicioMinRaw = extractProperty(props['Prom. Hora Inicio (auto)']);
+        let horaFinMinRaw = extractProperty(props['Prom. Hora Fin (auto)']);
+        let duracionMinRaw = extractProperty(props['Prom. Duración (auto)']);
+        
+        // Convert UTC minutes to Venezuela local time (UTC-4 / -240 min)
+        let horaInicioMin = horaInicioMinRaw ? convertUtcMinutesToVzla(horaInicioMinRaw) : baseline.horaInicioMin;
+        let horaFinMin = horaFinMinRaw ? convertUtcMinutesToVzla(horaFinMinRaw) : baseline.horaFinMin;
+        let duracionMin = duracionMinRaw ? Math.round(duracionMinRaw) : baseline.duracionMin;
+
+        let horaCorteFmt = (horaInicioMin && horaInicioMin > 0) ? formatMinutesTo12h(horaInicioMin) : baseline.horaCorteFmt;
+        let horaRetornoFmt = (horaFinMin && horaFinMin > 0) ? formatMinutesTo12h(horaFinMin) : baseline.horaRetornoFmt;
+        let ventanaRiesgo = (horaCorteFmt && horaRetornoFmt && horaCorteFmt !== '—') ? `${horaCorteFmt} – ${horaRetornoFmt}` : baseline.ventanaRiesgo;
+        
+        let duracionProm = (duracionMin && duracionMin > 0) 
+          ? `${Math.floor(duracionMin / 60)}h ${String(duracionMin % 60).padStart(2, '0')}m` 
+          : baseline.duracionProm;
+
+        // Fórmulas dinámicas vivas de Notion (prioridad absoluta)
+        let probabilidad = extractProperty(props['Probabilidad']) || baseline.probabilidad;
+        let pctTotal = extractProperty(props['% del Total']) || baseline.pctTotal;
         let conteo = extractProperty(props['Conteo (auto)']);
-
-        // Check if Notion rollups came back empty (due to unshared Historial relation)
-        const isNotionRollupEmpty = horaInicioMin === null || probabilidad === "⚪ Ninguna" || probabilidad === null;
-
-        if (isNotionRollupEmpty && baseline.dia) {
-          // Use solid baseline statistics verified in Notion
-          horaInicioMin = baseline.horaInicioMin;
-          horaFinMin = baseline.horaFinMin;
-          duracionMin = baseline.duracionMin;
-          horaCorteFmt = baseline.horaCorteFmt;
-          horaRetornoFmt = baseline.horaRetornoFmt;
-          ventanaRiesgo = baseline.ventanaRiesgo;
-          duracionProm = baseline.duracionProm;
-          probabilidad = baseline.probabilidad;
-          pctTotal = baseline.pctTotal;
-          conteo = baseline.conteo;
-        }
+        if (conteo === null || conteo === undefined) conteo = baseline.conteo;
+        let semanasObservadas = extractProperty(props['Semanas Observadas']) || baseline.semanasObservadas || 20;
 
         return {
           dia,
@@ -259,7 +255,7 @@ async function fetchDB2() {
           probabilidad,
           pctTotal,
           conteo,
-          semanasObservadas: extractProperty(props['Semanas Observadas']) || 18,
+          semanasObservadas,
           horaInicioMin,
           horaFinMin,
           duracionMin
