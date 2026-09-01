@@ -513,9 +513,31 @@ Usa los botones táctiles permanentes en pantalla o el menú oficial <b>[/]</b> 
           await sendTelegram(env.TELEGRAM_BOT_TOKEN, chatId, txt);
         } else if (resOff.not_found) {
           await sendTelegram(env.TELEGRAM_BOT_TOKEN, chatId, "ℹ️ <b>No se encontró ninguna sesión abierta de planta encendida en Notion.</b>\n(Todas las filas de generación tienen su hora de fin completada).");
-        } else {
-          await sendTelegram(env.TELEGRAM_BOT_TOKEN, chatId, `❌ Error al cerrar en Notion: <code>${resOff.error}</code>`);
         }
+      }
+      else if (["/prealerta", "prealerta"].includes(cmd)) {
+        const diaStat = STATS_BASE["Martes"];
+        const horaCorte = format12h(diaStat.inicio);
+        const ahoraStr = format12h(getVenezuelaDate().getHours() * 60 + getVenezuelaDate().getMinutes());
+        const preAlertaTxt = `⚠️ <b>PRE-ALERTA DE SEGURIDAD OPERATIVA — RIESGO DE CORTE INMINENTE (MODO DEMO)</b>
+📅 <b>Martes</b> · 🟠 Alta (55%)
+
+⏱️ <b>Hora actual:</b> ${ahoraStr}
+🔴 <b>Corte probable:</b> ~${horaCorte} <i>(en aproximadamente 25 minutos)</i>
+
+🛑 <b>Acciones prioritarias en taller:</b>
+1. <b>Láser CNC y Plegadora:</b> Pausar mecanizado de piezas complejas o concluir cortes en curso.
+2. <b>Respaldos:</b> Guardar archivos CAD/CAM y órdenes activas en PCs de planta.
+3. <b>Generador Iveco:</b> Confirmar llave en Standby lista para conmutación.
+
+<i>Presiona el botón abajo si la red comercial se interrumpe:</i>`;
+        const inlineKb = {
+          inline_keyboard: [
+            [{ text: "🔴 Planta ON (Corte)", callback_data: "action_planta_on" }],
+            [{ text: "🔋 Ver Horómetro Q3", callback_data: "action_ver_q3" }]
+          ]
+        };
+        await sendTelegram(env.TELEGRAM_BOT_TOKEN, chatId, preAlertaTxt, inlineKb);
       }
       else if (["/automatizaciones", "automatizaciones", "⚙️ automatizaciones"].includes(cmd)) {
         const autoTxt = `⚙️ <b>TABLERO DE CONTROL — SERVICIOS Y CRONS ACTIVOS</b>
@@ -634,11 +656,68 @@ Ventana de máxima estabilidad histórica en la red eléctrica comercial (0 cort
 🛡️ <b>Franja Dorada Matutina:</b> 06:00 AM – 11:00 AM (Estable de Lun a Sáb).`;
         await sendTelegram(env.TELEGRAM_BOT_TOKEN, chatId, semTxt);
       }
+      else if (data === "action_planta_on") {
+        await answerCallback(env.TELEGRAM_BOT_TOKEN, cbId, "Registrando Planta ON...");
+        const resOn = await registerPlantaOn(env);
+        if (resOn.ok) {
+          const txt = `🔴 <b>PLANTA ELÉCTRICA ENCENDIDA</b>
+⏱️ <b>Hora de Inicio:</b> ${resOn.timeStr}
+⚙️ <b>Equipo:</b> Generador Iveco Aifo (28 kW PRP)
+📋 <b>Plan Vinculado:</b> #Q3 Mantenimiento de la Planta
+📝 <b>Notion:</b> Registro creado con éxito en <i>Historial de Mantenimiento</i>.
+
+<i>Presiona <b>🟢 Planta OFF (Retorno)</b> al volver la red comercial para cerrar la sesión y sumar los minutos al horómetro.</i>`;
+          await sendTelegram(env.TELEGRAM_BOT_TOKEN, chatId, txt);
+        } else {
+          await sendTelegram(env.TELEGRAM_BOT_TOKEN, chatId, `❌ Error al registrar en Notion: <code>${resOn.error}</code>`);
+        }
+      }
+      else if (data === "action_ver_q3") {
+        await answerCallback(env.TELEGRAM_BOT_TOKEN, cbId, "Consultando Horómetro...");
+        const q3Html = await fetchQ3Status(env);
+        await sendTelegram(env.TELEGRAM_BOT_TOKEN, chatId, q3Html);
+      }
       else if (data.startsWith("toggle_")) {
         await answerCallback(env.TELEGRAM_BOT_TOKEN, cbId, "Estado actualizado");
       }
     }
 
     return new Response("OK", { status: 200 });
+  },
+
+  // Handler de Cron Triggers Automáticos en Cloudflare
+  async scheduled(event, env, ctx) {
+    const now = getVenezuelaDate();
+    const diaNombre = DIAS_MAP[now.getDay()];
+    const diaStat = STATS_BASE[diaNombre] || STATS_BASE["Martes"];
+
+    // Si la jornada tiene baja probabilidad (ej. Sábado o Domingo), omitir alerta
+    if (diaStat.prob < 20) return;
+
+    const horaCorte = format12h(diaStat.inicio);
+    const ahoraStr = format12h(now.getHours() * 60 + now.getMinutes());
+
+    const preAlertaTxt = `⚠️ <b>PRE-ALERTA DE SEGURIDAD OPERATIVA — RIESGO DE CORTE INMINENTE</b>
+📅 <b>${diaNombre}</b> · ${diaStat.prob_label}
+
+⏱️ <b>Hora actual:</b> ${ahoraStr}
+🔴 <b>Corte probable:</b> ~${horaCorte} <i>(en aproximadamente 25 minutos)</i>
+
+🛑 <b>Acciones prioritarias en taller:</b>
+1. <b>Láser CNC y Plegadora:</b> Pausar mecanizado de piezas complejas o concluir cortes en curso.
+2. <b>Respaldos:</b> Guardar archivos CAD/CAM y órdenes activas en PCs de planta.
+3. <b>Generador Iveco:</b> Confirmar llave en Standby lista para conmutación.
+
+<i>Presiona el botón abajo si la red comercial se interrumpe:</i>`;
+
+    const inlineKb = {
+      inline_keyboard: [
+        [{ text: "🔴 Planta ON (Corte)", callback_data: "action_planta_on" }],
+        [{ text: "🔋 Ver Horómetro Q3", callback_data: "action_ver_q3" }]
+      ]
+    };
+
+    const targetChatId = parseInt(env.TELEGRAM_AUTHORIZED_CHAT_ID || "1143226405");
+    await sendTelegram(env.TELEGRAM_BOT_TOKEN, targetChatId, preAlertaTxt, inlineKb);
   }
 };
