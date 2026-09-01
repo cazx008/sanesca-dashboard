@@ -544,7 +544,7 @@ Ventana de máxima estabilidad histórica en la red eléctrica comercial (0 cort
 • 🔴 <b>Muy Alta (≥70%):</b> Corte prácticamente certero.
 • 🟠 <b>Alta (50% – 69%):</b> Ventana crítica en la tarde (ej. Martes 55%).
 • 🟡 <b>Media (30% – 49%):</b> Cortes esporádicos o intermitentes.
-• 🟢 <b>Baja (<30%):</b> Jornadas estables.
+• 🟢 <b>Baja (&lt;30%):</b> Jornadas estables.
 
 ⚙️ <b>3. Generador Iveco Aifo GE 8031 I</b>
 • <b>Potencia PRP:</b> 28 kW (92A a 1800 RPM / 60 Hz).
