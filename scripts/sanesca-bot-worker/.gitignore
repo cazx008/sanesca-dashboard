@@ -1,0 +1,4 @@
+deploy_worker.py
+cf_call.js
+*.txt
+build_deploy.py
