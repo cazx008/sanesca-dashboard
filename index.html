@@ -641,7 +641,7 @@
             this.updateTimer();
           }, 60000);
 
-          fetch('data/dashboard.json')
+          fetch('data/dashboard.json?v=' + Date.now(), { cache: 'no-store' })
             .then(res => {
               if (!res.ok) throw new Error(`HTTP ${res.status}`);
               return res.json();
