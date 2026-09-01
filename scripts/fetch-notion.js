@@ -238,11 +238,16 @@ async function fetchDB2() {
           ? `${Math.floor(duracionMin / 60)}h ${String(duracionMin % 60).padStart(2, '0')}m` 
           : baseline.duracionProm;
 
-        // Fórmulas dinámicas vivas de Notion (prioridad absoluta)
-        let probabilidad = extractProperty(props['Probabilidad']) || baseline.probabilidad;
-        let pctTotal = extractProperty(props['% del Total']) || baseline.pctTotal;
-        let conteo = extractProperty(props['Conteo (auto)']);
-        if (conteo === null || conteo === undefined) conteo = baseline.conteo;
+        // Fórmulas dinámicas vivas de Notion (con fallback si el rollup cruzado viene vacío en la API)
+        let probabilidadRaw = extractProperty(props['Probabilidad']);
+        let pctTotalRaw = extractProperty(props['% del Total']);
+        let conteoRaw = extractProperty(props['Conteo (auto)']);
+
+        let isWeekdayEmpty = dia !== "Domingo" && (probabilidadRaw === "⚪ Ninguna" || probabilidadRaw === null);
+
+        let probabilidad = isWeekdayEmpty ? baseline.probabilidad : (probabilidadRaw || baseline.probabilidad);
+        let pctTotal = (isWeekdayEmpty || pctTotalRaw === "0%" || pctTotalRaw === null) && dia !== "Domingo" ? baseline.pctTotal : (pctTotalRaw || baseline.pctTotal);
+        let conteo = (conteoRaw !== null && conteoRaw !== undefined && conteoRaw > 0) ? conteoRaw : baseline.conteo;
         let semanasObservadas = extractProperty(props['Semanas Observadas']) || baseline.semanasObservadas || 20;
 
         return {
