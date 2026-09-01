@@ -243,10 +243,17 @@ async function fetchDB2() {
         let pctTotalRaw = extractProperty(props['% del Total']);
         let conteoRaw = extractProperty(props['Conteo (auto)']);
 
-        let isWeekdayEmpty = dia !== "Domingo" && (probabilidadRaw === "⚪ Ninguna" || probabilidadRaw === null);
+        const isWeekdayEmpty = dia !== "Domingo" && (
+          !probabilidadRaw || 
+          probabilidadRaw.includes("Ninguna") || 
+          probabilidadRaw.includes("⚪") || 
+          probabilidadRaw === "—"
+        );
 
         let probabilidad = isWeekdayEmpty ? baseline.probabilidad : (probabilidadRaw || baseline.probabilidad);
-        let pctTotal = (isWeekdayEmpty || pctTotalRaw === "0%" || pctTotalRaw === null) && dia !== "Domingo" ? baseline.pctTotal : (pctTotalRaw || baseline.pctTotal);
+        let pctTotal = (isWeekdayEmpty || !pctTotalRaw || pctTotalRaw === "0%" || pctTotalRaw === "0.0%") && dia !== "Domingo" 
+          ? baseline.pctTotal 
+          : (pctTotalRaw || baseline.pctTotal);
         let conteo = (conteoRaw !== null && conteoRaw !== undefined && conteoRaw > 0) ? conteoRaw : baseline.conteo;
         let semanasObservadas = extractProperty(props['Semanas Observadas']) || baseline.semanasObservadas || 20;
 
