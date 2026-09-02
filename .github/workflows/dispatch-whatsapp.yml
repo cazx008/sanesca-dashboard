@@ -1,9 +1,10 @@
 name: Despacho Matutino de Telemetria (WhatsApp)
 
 on:
-  schedule:
-    # 06:30 AM Venezuela (UTC-4) = 10:30 UTC, Lunes a Sábado
-    - cron: '30 10 * * 1-6'
+  # Cron migrado a Cloudflare Worker (sanesca-telegram-bot) para evitar retrasos de cola en GitHub Actions
+  # y colisión 409 con el webhook de Telegram.
+  # schedule:
+  #   - cron: '30 10 * * 1-6'
   workflow_dispatch:
     inputs:
       action:
